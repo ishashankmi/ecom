@@ -38,3 +38,16 @@ export const createProduct = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+export const searchProducts = async (req, res) => {
+  try {
+    const { q } = req.query;
+    const result = await pool.query(
+      'SELECT * FROM products WHERE name ILIKE $1 OR description ILIKE $1 ORDER BY name',
+      [`%${q}%`]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

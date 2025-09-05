@@ -26,6 +26,7 @@ const initialState: ProductsState = {
 
 export const fetchProducts = createAsyncThunk('products/fetchAll', async () => {
   const response = await productsAPI.getAll();
+  console.log('Products API response:', response.data);
   return response.data;
 });
 

@@ -14,6 +14,7 @@ export const productsAPI = {
   getAll: () => api.get('/products'),
   getById: (id: string) => api.get(`/products/${id}`),
   create: (product: any) => api.post('/products', product),
+  search: (query: string) => api.get(`/products/search?q=${encodeURIComponent(query)}`),
 };
 
 export const ordersAPI = {

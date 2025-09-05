@@ -10,12 +10,14 @@ import Orders from './pages/Orders';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginLayout from './components/LoginLayout';
+import Search from './pages/Search';
 const ProductView = React.lazy(() => import('./pages/ProductView'));
 
 const AppWithRouting = () => {
   return (
     <Routes>
       <Route path="/" element={<Layout component={<Home />} />} />
+      <Route path="/search" element={<Layout component={<Search />} />} />
       <Route
         path="/prn/:name/prid/:id"
         element={

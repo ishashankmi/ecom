@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 const productSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   price: z.number().min(0, 'Price must be positive'),
+  mrp: z.number().min(0, 'MRP must be positive'),
   category: z.string().min(1, 'Category is required'),
   stock: z.number().min(0, 'Stock must be positive'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
@@ -63,6 +64,16 @@ export default function ProductManager() {
                 className="w-full p-3 border rounded-lg"
               />
               {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
+            </div>
+
+            <div>
+              <input
+                {...register('mrp', { valueAsNumber: true })}
+                type="number"
+                placeholder="MRP"
+                className="w-full p-3 border rounded-lg"
+              />
+              {errors.mrp && <p className="text-red-500 text-sm">{errors.mrp.message}</p>}
             </div>
 
             <div>
