@@ -14,6 +14,7 @@ interface AuthState {
   token: string | null;
   loading: boolean;
   error: string | null;
+  isVerifying: boolean;
 }
 
 const initialState: AuthState = {
@@ -21,6 +22,7 @@ const initialState: AuthState = {
   token: localStorage.getItem('token'),
   loading: false,
   error: null,
+  isVerifying: false,
 };
 
 export const login = createAsyncThunk(
@@ -92,11 +94,16 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Registration failed';
       })
+      .addCase(verifyToken.pending, (state) => {
+        state.isVerifying = true;
+      })
       .addCase(verifyToken.fulfilled, (state, action) => {
+        state.isVerifying = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
       })
       .addCase(verifyToken.rejected, (state) => {
+        state.isVerifying = false;
         state.user = null;
         state.token = null;
         localStorage.removeItem('token');

@@ -136,14 +136,14 @@ const Footer = () => {
           </div>
         </div>
         <div>
-          <h4 className="font-bold my-6 text-lg">Brands</h4>
+          {/* <h4 className="font-bold my-6 text-lg">Brands</h4>
           <div className="flex flex-wrap gap-x-4 gap-y-2">
             {allBrands.map((brand, i) => (
               <Link key={i} to={`brand/${brand.link}`}>
                 <span className="_text-default text-sm">{brand.text}</span>
               </Link>
             ))}
-          </div>
+          </div> */}
         </div>
         <div>
           <h4 className="font-bold my-6 text-lg">Payment partners</h4>

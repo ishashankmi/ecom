@@ -8,7 +8,11 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children, adminOnly = false }: ProtectedRouteProps) {
-  const { user, token } = useAppSelector(state => state.auth);
+  const { user, token, isVerifying } = useAppSelector(state => state.auth);
+
+  if (isVerifying) {
+    return <div>Loading...</div>;
+  }
 
   if (!token || !user) {
     return <Navigate to="/login" replace />;
