@@ -45,7 +45,7 @@ export default function NewLoginForm() {
         <button
           type="button"
           onClick={handleClick}
-          className="w-full bg-green-600 text-white p-3 rounded-lg cursor-pointer text-center"
+          className="w-full bg-primary text-white p-3 rounded-lg cursor-pointer text-center hover:bg-primary-dark transition-colors"
         >
           Login
         </button>

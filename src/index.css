@@ -11,8 +11,8 @@
   -webkit-text-size-adjust: 100%;
 
   --container-max-width: 1280px;
-  --green-shade-1: rgb(236, 255, 236);
-  --green-shade-2: rgb(226, 249, 226);
+  --blue-shade-1: rgb(236, 244, 255);
+  --blue-shade-2: rgb(226, 239, 255);
   --border-default-color: rgb(221, 221, 221);
   --border-muted-color: rgb(238, 238, 238);
 
@@ -45,10 +45,10 @@ html {
     max-width: var(--container-max-width);
   }
   ._bg-shade-1 {
-    background: var(--green-shade-1);
+    background: var(--blue-shade-1);
   }
   ._bg-shade-2 {
-    background: var(--green-shade-2);
+    background: var(--blue-shade-2);
   }
   ._text-default {
     @apply text-neutral-700;
@@ -91,16 +91,17 @@ html {
   }
   ._card:hover {
     box-shadow: var(--box-shadow);
-    border: 0.5px solid rgb(146, 206, 116);
+    border: 0.5px solid #0041C2;
   }
   ._fab {
     @apply rounded-full cursor-pointer flex items-center justify-center;
     box-shadow: var(--floatingBtn-shadow);
   }
   ._add_to_cart {
-    @apply h-full w-full rounded-lg uppercase font-bold text-green-700;
-    background: rgb(247, 255, 249);
-    border: 0.5px solid rgb(12, 131, 31);
+    @apply h-full w-full rounded-lg uppercase font-bold;
+    color: #0041C2;
+    background: rgb(240, 248, 255);
+    border: 0.5px solid #0041C2;
   }
   ._swinging {
     animation-name: swigning;
@@ -122,7 +123,7 @@ html {
 }
 
 input[type='radio'] {
-  accent-color: rgb(12, 131, 31);
+  accent-color: #0041C2;
 }
 
 @media screen and (max-width: 640px) {

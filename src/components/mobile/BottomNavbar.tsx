@@ -1,18 +1,30 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FiHome, FiSearch, FiShoppingCart, FiUser, FiList } from 'react-icons/fi';
 import { useAppSelector } from '../../hooks';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { logout } from '../../store/auth';
 
 export default function BottomNavbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { totalQuantity } = useAppSelector(state => state.cart);
   const { user } = useAppSelector(state => state.auth);
+
+  const handleUserAction = () => {
+    if (user) {
+      dispatch(logout());
+      navigate('/');
+    } else {
+      navigate('/login');
+    }
+  };
 
   const navItems = [
     { path: '/', icon: FiHome, label: 'Home' },
     { path: '/search', icon: FiSearch, label: 'Search' },
     { path: '/cart', icon: FiShoppingCart, label: 'Cart', badge: totalQuantity },
     { path: '/orders', icon: FiList, label: 'Orders' },
-    { path: user ? '/profile' : '/login', icon: FiUser, label: user ? 'Profile' : 'Login' },
   ];
 
   return (
@@ -24,8 +36,8 @@ export default function BottomNavbar() {
             to={path}
             className={`flex flex-col items-center py-2 px-3 relative ${
               location.pathname === path
-                ? 'text-green-600'
-                : 'text-gray-500 hover:text-green-600'
+                ? 'text-primary'
+                : 'text-gray-500 hover:text-primary'
             }`}
           >
             <div className="relative">
@@ -39,6 +51,13 @@ export default function BottomNavbar() {
             <span className="text-xs mt-1">{label}</span>
           </Link>
         ))}
+        <button
+          onClick={handleUserAction}
+          className="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-primary"
+        >
+          <FiUser size={20} />
+          <span className="text-xs mt-1">{user ? 'Logout' : 'Login'}</span>
+        </button>
       </div>
     </div>
   );

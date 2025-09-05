@@ -39,7 +39,7 @@ const AddToCartButton = ({ product, size }: ButtonProps) => {
 
   return itemCount > 0 ? (
     <div
-      className={`flex h-full w-full justify-around rounded-lg uppercase font-bold text-sm bg-[#0c831f] cursor-pointer ${
+      className={`flex h-full w-full justify-around rounded-lg uppercase font-bold text-sm bg-primary cursor-pointer ${
         size === 'lg' ? 'text-lg' : 'text-normal'
       }`}
     >

@@ -12,7 +12,7 @@ const CartButtonBig = () => {
   return totalQuantity > 0 ? (
     <div className="fixed bottom-0 lg:hidden w-full p-3 z-10">
       <div
-        className="flex items-center rounded-[6px] w-full px-3 py-2 gap-2 font-bold leading-none bg-[#0c831f] cursor-pointer text-white _fab"
+        className="flex items-center rounded-[6px] w-full px-3 py-2 gap-2 font-bold leading-none bg-primary cursor-pointer text-white _fab"
         onClick={() => dispatch(showCart())}
       >
         <div className="flex flex-col">

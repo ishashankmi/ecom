@@ -39,7 +39,7 @@ export default function RegisterForm() {
           <input
             {...register('name')}
             placeholder="Full Name"
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           />
           {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
         </div>
@@ -49,7 +49,7 @@ export default function RegisterForm() {
             {...register('email')}
             type="email"
             placeholder="Email"
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           />
           {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
         </div>
@@ -59,7 +59,7 @@ export default function RegisterForm() {
             {...register('phone')}
             type="tel"
             placeholder="Phone Number"
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           />
           {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
         </div>
@@ -69,14 +69,14 @@ export default function RegisterForm() {
             {...register('password')}
             type="password"
             placeholder="Password"
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           />
           {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
         </div>
 
         <button
           type="submit"
-          className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition-colors"
+          className="w-full bg-primary text-white p-3 rounded-lg hover:bg-primary-dark transition-colors"
         >
           Register
         </button>

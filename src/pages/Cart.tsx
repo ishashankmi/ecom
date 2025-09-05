@@ -12,7 +12,7 @@ export default function Cart() {
       <div className="h-full bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
-          <Link to="/" className="bg-green-600 text-white px-6 py-3 rounded-lg">
+          <Link to="/" className="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-dark transition-colors">
             Start Shopping
           </Link>
         </div>
@@ -36,7 +36,7 @@ export default function Cart() {
               
               <div className="flex-1">
                 <h3 className="font-medium">{item.product.name}</h3>
-                <p className="text-green-600 font-bold">₹{item.product.price}</p>
+                <p className="text-primary font-bold">₹{item.product.price}</p>
               </div>
               
               <div className="flex items-center space-x-3">
@@ -51,7 +51,7 @@ export default function Cart() {
                 
                 <button
                   onClick={() => dispatch(addItem(item.product))}
-                  className="p-2 text-green-600"
+                  className="p-2 text-primary"
                 >
                   <FiPlus size={16} />
                 </button>
@@ -68,7 +68,7 @@ export default function Cart() {
           
           <Link
             to="/checkout"
-            className="w-full bg-green-600 text-white py-3 rounded-lg text-center block hover:bg-green-700"
+            className="w-full bg-primary text-white py-3 rounded-lg text-center block hover:bg-primary-dark transition-colors"
           >
             Proceed to Checkout
           </Link>

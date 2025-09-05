@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import NewLoginForm from '../components/auth/NewLoginForm';
 import RegisterForm from '../components/auth/RegisterForm';
 
 export default function Login() {
-  const [isLogin, setIsLogin] = useState(true);
+  const location = useLocation();
+  const [isLogin, setIsLogin] = useState(location.pathname === '/login');
 
   return (
     <div className="h-screen bg-gray-50 flex items-center justify-center px-4">
@@ -13,9 +15,9 @@ export default function Login() {
         <div className="mt-4 text-center">
           <button
             onClick={() => setIsLogin(!isLogin)}
-            className="text-green-600 hover:underline"
+            className="text-primary hover:underline"
           >
-            {isLogin ? "Don't have an account? Register" : "Already have an account? Login"}
+            {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
           </button>
         </div>
       </div>

@@ -8,7 +8,13 @@ export default {
       xs: '420px',
       ...defaultTheme.screens,
     },
-    extend: {},
+    extend: {
+      colors: {
+        primary: '#0041C2',
+        'primary-dark': '#003399',
+        'primary-light': '#1a5ce6',
+      },
+    },
   },
   plugins: [],
 };

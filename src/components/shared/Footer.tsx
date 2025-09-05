@@ -171,10 +171,10 @@ const Footer = () => {
       <div className="bg-[#fcfcfc] py-6 mt-2 min-h-[60px]">
         <div className="_container">
           <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-center">
-            <div className="text-xs flex-1 _text-muted lg:max-w-md pr-6">
+            {/* <div className="text-xs flex-1 _text-muted lg:max-w-md pr-6">
               &copy; Bring Commerce Private Limited (formerly known as Loafers
               Inc Private Limited), 2016-2022
-            </div>
+            </div> */}
             <div className="flex flex-1 md:flex-row items-center gap-2">
               <h4 className="font-bold text-md leading-none lg:mr-4 _text-default">
                 Download App

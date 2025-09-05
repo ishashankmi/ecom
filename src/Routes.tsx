@@ -27,6 +27,7 @@ const AppWithRouting = () => {
         }
       />
       <Route path="/login" element={<LoginLayout component={<Login />} />} />
+      <Route path="/signup" element={<LoginLayout component={<Login />} />} />
       <Route path="/cart" element={<Layout component={<Cart />} />} />
       <Route path="/orders" element={
         <ProtectedRoute>

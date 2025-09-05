@@ -87,12 +87,12 @@ const ProductView = () => {
             
             <div className="space-y-4">
               <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-bold text-green-600">₹{product.price}</span>
+                <span className="text-3xl font-bold text-primary">₹{product.price}</span>
                 {product.price < product.mrp && (
                   <span className="text-lg text-gray-400 line-through">₹{product.mrp}</span>
                 )}
                 {product.price < product.mrp && (
-                  <span className="text-sm bg-green-100 text-green-700 px-2 py-1 rounded">
+                  <span className="text-sm bg-blue-100 text-primary px-2 py-1 rounded">
                     {Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF
                   </span>
                 )}
@@ -106,7 +106,7 @@ const ProductView = () => {
               <div className="flex items-center gap-2 text-sm">
                 <span className="_text-muted">Stock:</span>
                 <span className={`font-medium ${
-                  product.stock > 10 ? 'text-green-600' : 
+                  product.stock > 10 ? 'text-primary' : 
                   product.stock > 0 ? 'text-orange-600' : 'text-red-600'
                 }`}>
                   {product.stock > 0 ? `${product.stock} units available` : 'Out of stock'}
