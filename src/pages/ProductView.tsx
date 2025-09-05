@@ -2,17 +2,33 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { productsAPI } from '../services/api';
 import AddToCartButton from '../components/shared/AddToCartButton';
+import ProductCard from '../components/ProductCard';
 
 const ProductView = () => {
   const { id } = useParams();
   const [product, setProduct] = useState<any>(null);
+  const [similarProducts, setSimilarProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProduct = async () => {
+      setLoading(true);
       try {
         const response = await productsAPI.getById(id!);
         setProduct(response.data);
+        
+        // Fetch similar products
+        try {
+          const similarResponse = await productsAPI.getSimilar(response.data.category, id!);
+          setSimilarProducts(similarResponse.data.slice(0, 8));
+        } catch (error) {
+          // Fallback: get all products and filter by category
+          const allResponse = await productsAPI.getAll();
+          const filtered = allResponse.data
+            .filter((p: any) => p.category === response.data.category && p.id.toString() !== id)
+            .slice(0, 8);
+          setSimilarProducts(filtered);
+        }
       } catch (error) {
         console.error('Error fetching product:', error);
       } finally {
@@ -20,7 +36,11 @@ const ProductView = () => {
       }
     };
     
-    if (id) fetchProduct();
+    if (id) {
+      fetchProduct();
+      // Scroll to top when product changes
+      window.scrollTo(0, 0);
+    }
   }, [id]);
 
   if (loading) {
@@ -108,6 +128,18 @@ const ProductView = () => {
           </div>
         </div>
       </div>
+      
+      {/* Similar Products Section */}
+      {similarProducts.length > 0 && (
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold _text-default mb-6">Similar Products</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {similarProducts.map((similarProduct) => (
+              <ProductCard key={similarProduct.id} product={similarProduct} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

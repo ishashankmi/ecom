@@ -15,6 +15,8 @@ export const productsAPI = {
   getById: (id: string) => api.get(`/products/${id}`),
   create: (product: any) => api.post('/products', product),
   search: (query: string) => api.get(`/products/search?q=${encodeURIComponent(query)}`),
+  getSimilar: (category: string, excludeId: string) => 
+    api.get(`/products?category=${encodeURIComponent(category)}&exclude=${excludeId}&limit=8`),
 };
 
 export const ordersAPI = {
