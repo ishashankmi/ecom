@@ -1,12 +1,27 @@
 import { FaRegUser } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { CartButton } from '../cart';
 import LocationPicker from '../LocationPicker';
 import SearchBox from '../SearchBox';
+import { useAppSelector, useAppDispatch } from '../../hooks';
+import { logout } from '../../store/auth';
 
 const Header = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector(state => state.auth);
+
+  const handleAuthClick = () => {
+    if (user) {
+      dispatch(logout());
+      navigate('/login');
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
-    <header className="_nav px-2 sm:px-0">
+    <header className="_nav px-2 sm:px-0 hidden md:block fixed top-0 left-0 right-0 z-50 bg-white">
       <div className="_header sm:flex h-full">
         <div className="hidden sm:flex max-w-[150px] md:max-w-[178px] w-full cursor-pointer sm:hover:bg-gray-50 items-center justify-center border-r _border-light">
           <Link to={'/'}>
@@ -21,9 +36,9 @@ const Header = () => {
         <div className="flex-1 relative _header_search">
           <SearchBox />
         </div>
-        <div className="flex items-center _header_login justify-center cursor-pointer sm:hover:bg-gray-50 max-w-[80px] lg:max-w-[160px] w-full ">
+        <div onClick={handleAuthClick} className="flex items-center _header_login justify-center cursor-pointer sm:hover:bg-gray-50 max-w-[80px] lg:max-w-[160px] w-full ">
           <span className="font-medium _text-default hidden sm:block">
-            Login
+            {user ? user.name : 'Login'}
           </span>
           <span className="sm:hidden _text-default">
             <FaRegUser size={22} />

@@ -84,9 +84,16 @@ const cartSlice = createSlice({
         (total, item) => total + (item.product.mrp - item.product.price) * item.quantity,
         0
       );
+    },
+    clearCart: (state) => {
+      state.cartItems = [];
+      state.totalQuantity = 0;
+      state.totalAmount = 0;
+      state.billAmount = 0;
+      state.discount = 0;
     }
   },
 });
 
 export default cartSlice.reducer;
-export const { addItem, removeItem } = cartSlice.actions;
+export const { addItem, removeItem, clearCart } = cartSlice.actions;

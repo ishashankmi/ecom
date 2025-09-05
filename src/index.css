@@ -30,6 +30,13 @@
 body,
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+.fixed {
+  position: fixed !important;
+  transform: translate3d(0, 0, 0) !important;
+  backface-visibility: hidden !important;
 }
 
 @layer components {
@@ -56,8 +63,10 @@ html {
     border-color: var(--border-muted-color);
   }
   ._nav {
-    @apply fixed inset-x-0 top-0 bg-white sm:h-[86px] z-20;
+    @apply fixed inset-x-0 top-0 bg-white sm:h-[86px];
     box-shadow: var(--nav-shadow);
+    z-index: 9999 !important;
+    position: fixed !important;
   }
   ._searchbox {
     @apply bg-white border rounded-lg sm:absolute sm:max-w-[300px] md:max-w-[600px] w-full mx-auto lg:mx-2 pl-16 pr-6 flex items-center;

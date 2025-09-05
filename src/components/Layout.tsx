@@ -5,6 +5,8 @@ import BrandPromotion from './BrandPromotion';
 import CartButtonBig from './cart/CartButtonBig';
 import Modal from './Modal';
 import { CartPanel } from './cart';
+import MobileHeader from './mobile/MobileHeader';
+import BottomNavbar from './mobile/BottomNavbar';
 import { useAppSelector } from '../hooks/useAppSelector';
 
 type Props = {
@@ -24,7 +26,8 @@ const Layout = ({ noFooter, component }: Props) => {
     <>
       <div>
         <Header />
-        <main className="pt-28 sm:pt-24">{component}</main>
+        <MobileHeader />
+        <main className="pt-16 md:pt-24 pb-16 md:pb-0">{component}</main>
         {!noFooter && (
           <>
             <BrandPromotion />
@@ -32,6 +35,7 @@ const Layout = ({ noFooter, component }: Props) => {
           </>
         )}
         <CartButtonBig />
+
       </div>
       {cartShown && <CartPanel />}
       {modalShown && <Modal />}

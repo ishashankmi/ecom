@@ -7,7 +7,7 @@ const ProductsRow = ({ data, objects }: ProductRow) => {
   )[0];
 
   return (
-    <section>
+    <section className="px-4 py-4">
       {data.show_header && (
         <div className="flex items-center justify-between h-16">
           <h2 className="font-bold text-[26px] _text-default">{data.title}</h2>

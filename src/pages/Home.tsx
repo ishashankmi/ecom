@@ -7,6 +7,7 @@ import {
   ProductsRow,
 } from '../components/home';
 import Misc from '../lib/data/layout.json';
+import TestLogin from '../components/TestLogin';
 
 const Home = () => {
   const productItems: any[] = Misc.filter((item) => item.type === 77).map(
@@ -17,12 +18,12 @@ const Home = () => {
   );
 
   return (
-    <div className="_container">
-      <HeroArea />
-      <FeaturedPromo />
-      <CategoriesList />
-      <DiscountOffers />
-      <HighlightedPromo />
+    <div className="_container overflow-x-hidden">
+      {/* <HeroArea />
+      <FeaturedPromo /> */}
+      {/* <CategoriesList /> */}
+      {/* <DiscountOffers />
+      <HighlightedPromo /> */}
       {productItems.map((products, i) => (
         <ProductsRow key={i} {...products} />
       ))}
