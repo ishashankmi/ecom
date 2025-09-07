@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { fetchProducts, createProduct } from '../../store/products';
+import { fetchProducts, createProduct, updateProduct, deleteProduct } from '../../store/products';
 import { toast } from 'react-toastify';
 
 const productSchema = z.object({
@@ -20,7 +20,8 @@ type ProductData = z.infer<typeof productSchema>;
 export default function ProductManager() {
   const dispatch = useAppDispatch();
   const { products, loading } = useAppSelector(state => state.products);
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<ProductData>({
+  const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ProductData>({
     resolver: zodResolver(productSchema),
   });
 
@@ -30,12 +31,44 @@ export default function ProductManager() {
 
   const onSubmit = async (data: ProductData) => {
     try {
-      await dispatch(createProduct({ ...data, image: '/categories/1.avif' })).unwrap();
-      toast.success('Product added successfully!');
+      if (editingProduct) {
+        await dispatch(updateProduct({ id: editingProduct, ...data, image: '/categories/1.avif' })).unwrap();
+        toast.success('Product updated successfully!');
+        setEditingProduct(null);
+      } else {
+        await dispatch(createProduct({ ...data, image: '/categories/1.avif' })).unwrap();
+        toast.success('Product added successfully!');
+      }
       reset();
     } catch (error) {
-      toast.error('Failed to add product');
+      toast.error(editingProduct ? 'Failed to update product' : 'Failed to add product');
     }
+  };
+
+  const handleEdit = (product: any) => {
+    setEditingProduct(product.id);
+    setValue('name', product.name);
+    setValue('price', product.price);
+    setValue('mrp', product.mrp);
+    setValue('category', product.category);
+    setValue('stock', product.stock);
+    setValue('description', product.description);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm('Are you sure you want to delete this product?')) {
+      try {
+        await dispatch(deleteProduct(id)).unwrap();
+        toast.success('Product deleted successfully!');
+      } catch (error) {
+        toast.error('Failed to delete product');
+      }
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingProduct(null);
+    reset();
   };
 
   return (
@@ -44,7 +77,7 @@ export default function ProductManager() {
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold mb-4">Add New Product</h3>
+          <h3 className="text-lg font-semibold mb-4">{editingProduct ? 'Edit Product' : 'Add New Product'}</h3>
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
@@ -107,12 +140,23 @@ export default function ProductManager() {
               {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
             </div>
 
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700"
-            >
-              Add Product
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                className="flex-1 bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700"
+              >
+                {editingProduct ? 'Update Product' : 'Add Product'}
+              </button>
+              {editingProduct && (
+                <button
+                  type="button"
+                  onClick={cancelEdit}
+                  className="px-4 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
           </form>
         </div>
 
@@ -132,8 +176,18 @@ export default function ProductManager() {
                     <p className="text-xs text-gray-500">{product.category}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="text-blue-600 text-sm">Edit</button>
-                    <button className="text-red-600 text-sm">Delete</button>
+                    <button 
+                      onClick={() => handleEdit(product)}
+                      className="text-blue-600 text-sm hover:underline"
+                    >
+                      Edit
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(product.id)}
+                      className="text-red-600 text-sm hover:underline"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
               </div>

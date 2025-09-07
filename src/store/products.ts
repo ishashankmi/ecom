@@ -38,6 +38,22 @@ export const createProduct = createAsyncThunk(
   }
 );
 
+export const updateProduct = createAsyncThunk(
+  'products/update',
+  async ({ id, ...productData }: Product) => {
+    const response = await productsAPI.update(id, productData);
+    return response.data;
+  }
+);
+
+export const deleteProduct = createAsyncThunk(
+  'products/delete',
+  async (id: string) => {
+    await productsAPI.delete(id);
+    return id;
+  }
+);
+
 const productsSlice = createSlice({
   name: 'products',
   initialState,
@@ -61,6 +77,15 @@ const productsSlice = createSlice({
       })
       .addCase(createProduct.fulfilled, (state, action) => {
         state.products.unshift(action.payload);
+      })
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        const index = state.products.findIndex(p => p.id === action.payload.id);
+        if (index !== -1) {
+          state.products[index] = action.payload;
+        }
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        state.products = state.products.filter(p => p.id !== action.payload);
       });
   },
 });

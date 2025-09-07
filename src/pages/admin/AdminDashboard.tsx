@@ -1,9 +1,14 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../../hooks';
+import { logout } from '../../store/auth';
 import ProductManager from '../../components/admin/ProductManager';
 import OrderManager from '../../components/admin/OrderManager';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('products');
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const tabs = [
     { id: 'products', label: 'Products', component: ProductManager },
@@ -18,7 +23,13 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-            <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+            <button 
+              onClick={() => {
+                dispatch(logout());
+                navigate('/login');
+              }}
+              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+            >
               Logout
             </button>
           </div>

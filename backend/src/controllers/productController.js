@@ -39,6 +39,41 @@ export const createProduct = async (req, res) => {
   }
 };
 
+export const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, price, mrp, category, stock, description, image } = req.body;
+    
+    const result = await pool.query(
+      'UPDATE products SET name = $1, price = $2, mrp = $3, category = $4, stock = $5, description = $6, image = $7 WHERE id = $8 RETURNING *',
+      [name, price, mrp, category, stock, description, image, id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query('DELETE FROM products WHERE id = $1 RETURNING *', [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    
+    res.json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const searchProducts = async (req, res) => {
   try {
     const { q } = req.query;
