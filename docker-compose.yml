@@ -50,8 +50,11 @@ services:
       DB_USER: myuser
       DB_PASSWORD: mypassword
     depends_on:
-      - backend
-    command: node seed-data.js
+      backend:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    command: sh -c "sleep 10 && node seed-data.js"
     restart: "no"
 
   frontend:
