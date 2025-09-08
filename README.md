@@ -2,8 +2,6 @@
 
 BringIt is a modern, upgraded version of BlinkIt clone - an online supermarket application to buy Fruits, Veggies, Snacks, Milk & more with safe & hygienic home delivery.
 
-![bringit-cover](https://user-images.githubusercontent.com/11155266/183999445-125f7cd8-57fc-46fd-a209-9aadde210888.png)
-
 ## ✨ Features
 - Browse through various product categories
 - View detailed product information
@@ -11,8 +9,6 @@ BringIt is a modern, upgraded version of BlinkIt clone - an online supermarket a
 - Add items to cart with quantity management
 - Responsive design for all devices
 - Modern UI/UX with smooth animations
-
-[Check live demo](https://blinkit-clone.surge.sh)
 
 ## 🛠️ Modern Tech Stack (v2.0 Upgrades)
 
