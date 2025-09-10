@@ -1,106 +1,136 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../store/cartSlice';
-import { Product } from '../store/productsSlice';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Product, CartProduct } from '../types';
+import AddToCartButton from './shared/AddToCartButton';
 
-interface ProductCardProps {
+const { width } = Dimensions.get('window');
+const cardWidth = (width - 48) / 2;
+
+interface Props {
   product: Product;
-  onPress: () => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
-  const dispatch = useDispatch();
+const ProductCard: React.FC<Props> = ({ product }) => {
+  const navigation = useNavigation();
+  const { id, name, price, mrp, image, category } = product;
 
-  const handleAddToCart = () => {
-    dispatch(addToCart(product));
+  const cartProduct: CartProduct = {
+    id: id.toString(),
+    title: name,
+    subTitle: category,
+    image,
+    price,
+    mrp,
   };
 
+  const handleProductPress = () => {
+    navigation.navigate('ProductDetail' as never, { productId: id } as never);
+  };
+
+  const imageUri = image 
+    ? `http://localhost:3001${image}` 
+    : 'http://localhost:3001/uploads/placeholder.png';
+
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress}>
-      <View style={styles.imageContainer}>
-        <Text style={styles.imagePlaceholder}>📦</Text>
-      </View>
+    <View style={[styles.card, { width: cardWidth }]}>
+      <TouchableOpacity onPress={handleProductPress} style={styles.imageContainer}>
+        <Image source={{ uri: imageUri }} style={styles.image} />
+      </TouchableOpacity>
       
       <View style={styles.content}>
-        <Text style={styles.name} numberOfLines={2}>{product.name}</Text>
-        <Text style={styles.description} numberOfLines={1}>{product.description}</Text>
-        
-        <View style={styles.priceContainer}>
-          <Text style={styles.price}>₹{product.price}</Text>
-          <Text style={styles.mrp}>₹{product.mrp}</Text>
-        </View>
-        
-        <TouchableOpacity style={styles.addButton} onPress={handleAddToCart}>
-          <Text style={styles.addButtonText}>ADD</Text>
+        <TouchableOpacity onPress={handleProductPress}>
+          <Text style={styles.name} numberOfLines={2}>
+            {name}
+          </Text>
+          <Text style={styles.category} numberOfLines={1}>
+            {category}
+          </Text>
         </TouchableOpacity>
+        
+        <View style={styles.footer}>
+          <TouchableOpacity onPress={handleProductPress}>
+            {price < mrp ? (
+              <View>
+                <Text style={styles.price}>₹{price}</Text>
+                <Text style={styles.mrp}>₹{mrp}</Text>
+              </View>
+            ) : (
+              <Text style={styles.price}>₹{mrp}</Text>
+            )}
+          </TouchableOpacity>
+          
+          <View style={styles.addToCartContainer}>
+            <AddToCartButton product={cartProduct} />
+          </View>
+        </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    flex: 1,
-    margin: 8,
-    backgroundColor: 'white',
-    borderRadius: 12,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    marginBottom: 16,
+    elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,
   },
   imageContainer: {
     height: 120,
-    backgroundColor: '#f5f5f5',
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: '100%',
   },
-  imagePlaceholder: {
-    fontSize: 40,
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    padding: 8,
   },
   content: {
     padding: 12,
+    flex: 1,
   },
   name: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: '500',
+    color: '#333',
     marginBottom: 4,
   },
-  description: {
+  category: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 8,
+    marginBottom: 12,
   },
-  priceContainer: {
+  footer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginTop: 'auto',
   },
   price: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000',
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
   },
   mrp: {
     fontSize: 12,
     color: '#999',
     textDecorationLine: 'line-through',
-    marginLeft: 8,
   },
-  addButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 8,
-    borderRadius: 6,
-    alignItems: 'center',
-  },
-  addButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 12,
+  addToCartContainer: {
+    width: 80,
+    height: 32,
   },
 });
 
