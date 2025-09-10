@@ -60,7 +60,7 @@ const CategorySelection: React.FC<CategorySelectionProps> = ({ onCategorySelect,
   return (
     <div className="mb-6">
       <h3 className="text-lg font-semibold mb-4">Shop by Category</h3>
-      <div className="flex overflow-x-auto gap-3 pb-2 scrollbar-hide">
+      <div className="flex overflow-x-auto gap-3 pb-2" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
         {allCategories.map((category) => (
           <button
             key={category.id}

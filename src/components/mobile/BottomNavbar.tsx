@@ -27,7 +27,7 @@ export default function BottomNavbar() {
   ];
 
   return (
-    <div className="bg-white border-t border-gray-200 md:hidden" style={{position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 9999, transform: 'translate3d(0, 0, 0)', willChange: 'transform'}}>
+    <div className="bg-white border-t border-gray-200 md:hidden" style={{position: 'fixed', bottom: '0px', left: 0, right: 0, zIndex: 9999, transform: 'translate3d(0, 0, 0)', willChange: 'transform'}}>
       <div className="flex justify-around items-center py-2">
         {navItems.map(({ path, icon: Icon, label, badge }) => (
           <Link

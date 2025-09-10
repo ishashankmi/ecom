@@ -193,3 +193,8 @@ input[type='radio'] {
     box-shadow: -38px 6px, -14px -6px, 14px 6px;
   }
 }
+
+/* Hide scrollbar */
+.overflow-x-auto::-webkit-scrollbar {
+  display: none;
+}

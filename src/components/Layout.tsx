@@ -29,7 +29,7 @@ const Layout = ({ noFooter, component }: Props) => {
       <div>
         <Header />
         <MobileHeader />
-        <main className="pt-16 md:pt-24 pb-16 md:pb-0">{component}</main>
+        <main className="pt-16 md:pt-24 pb-20 md:pb-0">{component}</main>
         {!noFooter && (
           <>
             <BrandPromotion />
