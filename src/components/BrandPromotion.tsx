@@ -128,19 +128,11 @@ const BrandPromotion = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 items-start gap-2 sm:gap-4 xl:gap-10 mt-6">
-            {allFeatures.map((feat, i) => (
+            {/* {allFeatures.map((feat, i) => (
               <PromoFeature key={i} {...feat} />
-            ))}
+            ))} */}
           </div>
-          <div className="border-b _border-light pt-2 pb-10">
-            <p className="text-sm _text-default">
-              "Saras" is owned & managed by "Bring Commerce Private Limited"
-              (formerly known as Loafers Inc Private Limited) and is not
-              related, linked or interconnected in whatsoever manner or nature,
-              to "LOAFER.COM" which is a real estate services business operated
-              by "Blackstone Consultancy Services Fake Limited".
-            </p>
-          </div>
+          
         </div>
       </div>
     </section>

@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useAppSelector } from '../hooks';
+import { useNavigate } from 'react-router-dom';
+import { useAppSelector, useAppDispatch } from '../hooks';
 import { authAPI, ordersAPI } from '../services/api';
+import { logoutAsync } from '../store/auth';
 
 const Profile = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
   const [activeTab, setActiveTab] = useState('profile');
   const [orders, setOrders] = useState<any[]>([]);
@@ -39,6 +43,11 @@ const Profile = () => {
     } catch (error) {
       alert('Error updating profile');
     }
+  };
+
+  const handleLogout = () => {
+    dispatch(logoutAsync());
+    navigate('/');
   };
 
   const getStatusColor = (status: string) => {
@@ -109,12 +118,21 @@ const Profile = () => {
                     required
                   />
                 </div>
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
-                >
-                  Update Profile
-                </button>
+                <div className="flex gap-4">
+                  <button
+                    type="submit"
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
+                  >
+                    Update Profile
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700"
+                  >
+                    Logout
+                  </button>
+                </div>
               </form>
             </div>
           )}
