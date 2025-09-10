@@ -73,6 +73,8 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       cookieUtils.clearAll();
+      // Clear cart from localStorage when user logs out
+      localStorage.removeItem('cart');
     },
     clearError: (state) => {
       state.error = null;
@@ -123,6 +125,8 @@ const authSlice = createSlice({
       .addCase(logoutAsync.fulfilled, (state) => {
         state.user = null;
         state.token = null;
+        // Clear cart from localStorage when user logs out
+        localStorage.removeItem('cart');
       });
   },
 });
