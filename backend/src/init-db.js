@@ -31,8 +31,7 @@ const initDB = async () => {
         brand VARCHAR(255),
         sales_prices JSONB,
         mrp DECIMAL(10,2) NOT NULL,
-        category_id INTEGER REFERENCES categories(id),
-        category VARCHAR(100) NOT NULL,
+        category_id INTEGER NOT NULL REFERENCES categories(id),
         batch_no VARCHAR(100),
         expiry_date DATE,
         description TEXT,
@@ -46,6 +45,11 @@ const initDB = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
+    `);
+
+    // Remove old category column if it exists
+    await pool.query(`
+      ALTER TABLE products DROP COLUMN IF EXISTS category
     `);
 
     await pool.query(`

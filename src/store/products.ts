@@ -45,6 +45,18 @@ export const fetchProducts = createAsyncThunk('products/fetchAll', async () => {
   return response.data;
 });
 
+export const fetchProductsByCategory = createAsyncThunk(
+  'products/fetchByCategory', 
+  async (category: string) => {
+    if (category === 'all') {
+      const response = await productsAPI.getAll();
+      return response.data;
+    }
+    const response = await productsAPI.getByCategory(category);
+    return response.data;
+  }
+);
+
 export const createProduct = createAsyncThunk(
   'products/create',
   async (productData: Omit<Product, 'id'>) => {
@@ -101,6 +113,17 @@ const productsSlice = createSlice({
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         state.products = state.products.filter(p => p.id !== action.payload);
+      })
+      .addCase(fetchProductsByCategory.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchProductsByCategory.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products = action.payload;
+      })
+      .addCase(fetchProductsByCategory.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch products by category';
       });
   },
 });

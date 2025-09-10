@@ -5,6 +5,7 @@ import uiReducer from './ui'
 import authReducer from './auth'
 import ordersReducer from './orders'
 import productsReducer from './products'
+import categoriesReducer from './categories'
 
 const store = configureStore({
   reducer: {
@@ -13,7 +14,8 @@ const store = configureStore({
     modal: modalReducer,
     auth: authReducer,
     orders: ordersReducer,
-    products: productsReducer
+    products: productsReducer,
+    categories: categoriesReducer
   }
 })
 
