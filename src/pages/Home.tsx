@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { fetchProducts } from '../store/products';
+import { fetchProducts, fetchProductsByCategory } from '../store/products';
 import ProductCard from '../components/ProductCard';
 import CategorySelection from '../components/CategorySelection';
 
@@ -18,13 +18,14 @@ const Home = () => {
     }
   }, [dispatch, products.length]);
 
-  const filteredProducts = selectedCategory === 'all' 
-    ? products 
-    : products.filter(product => {
-        const productCategory = product.category?.toLowerCase();
-        const selected = String(selectedCategory).toLowerCase();
-        return productCategory === selected;
-      });
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    dispatch(fetchProductsByCategory(categoryId));
+  };
+
+  const filteredProducts = products;
+  const { categories } = useAppSelector(state => state.categories);
+  const selectedCategoryName = selectedCategory === 'all' ? 'All' : categories.find(cat => cat.id.toString() === selectedCategory)?.name || 'Unknown';
 
   if (initialLoad && loading) {
     return <div className="text-center py-8">Loading products...</div>;
@@ -41,12 +42,12 @@ const Home = () => {
   return (
     <div className="_container overflow-x-hidden p-4">
       <CategorySelection 
-        onCategorySelect={setSelectedCategory}
+        onCategorySelect={handleCategorySelect}
         selectedCategory={selectedCategory}
       />
       
-      <h2 className="text-2xl font-bold mb-6">
-        {selectedCategory === 'all' ? 'All Products' : `${String(selectedCategory).charAt(0).toUpperCase() + String(selectedCategory).slice(1)} Products`}
+      <h2 className="text-2xl font-bold mb-6 capitalize">
+        {selectedCategoryName}
       </h2>
       
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">

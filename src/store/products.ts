@@ -47,12 +47,12 @@ export const fetchProducts = createAsyncThunk('products/fetchAll', async () => {
 
 export const fetchProductsByCategory = createAsyncThunk(
   'products/fetchByCategory', 
-  async (category: string) => {
-    if (category === 'all') {
+  async (categoryId: string) => {
+    if (categoryId === 'all') {
       const response = await productsAPI.getAll();
       return response.data;
     }
-    const response = await productsAPI.getByCategory(category);
+    const response = await productsAPI.getByCategoryId(categoryId);
     return response.data;
   }
 );

@@ -47,6 +47,7 @@ const CategorySelection: React.FC<CategorySelectionProps> = ({ onCategorySelect,
     { id: 'all', name: 'All', icon: '🛒', color: 'bg-blue-100 text-blue-600' },
     ...categories.map((cat, index) => ({
       ...cat,
+      id: cat.id.toString(),
       icon: cat.icon || getDefaultIcon(cat.name),
       color: cat.color || getDefaultColor(index)
     }))

@@ -1,57 +1,33 @@
 import { useParams } from 'react-router-dom';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
+import { useAppSelector } from '../hooks';
 import { productsAPI } from '../services/api';
 import AddToCartButton from '../components/shared/AddToCartButton';
 import ProductCard from '../components/ProductCard';
 
 const ProductView = () => {
   const { id } = useParams();
-  const [product, setProduct] = useState<any>(null);
-  const [similarProducts, setSimilarProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { products } = useAppSelector(state => state.products);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const fetchingRef = useRef<string | null>(null);
+  const [similarProducts, setSimilarProducts] = useState<any[]>([]);
+  const [loadingSimilar, setLoadingSimilar] = useState(false);
+
+  const product = products.find(p => p.id.toString() === id);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      if (fetchingRef.current === id) return;
-      fetchingRef.current = id!;
-      
-      try {
-        const response = await productsAPI.getById(id!);
-        setProduct(response.data);
-        
-        // Fetch similar products
-        if (response.data.category) {
-          try {
-            const similarResponse = await productsAPI.getSimilar(response.data.category, id!);
-            setSimilarProducts(similarResponse.data.slice(0, 8));
-          } catch (error) {
-            // Fallback: get all products and filter by category
-            const allResponse = await productsAPI.getAll();
-            const filtered = allResponse.data
-              .filter((p: any) => p.category === response.data.category && p.id.toString() !== id)
-              .slice(0, 8);
-            setSimilarProducts(filtered);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching product:', error);
-        setLoading(true);
-      }
-    };
+    window.scrollTo(0, 0);
     
-    if (id) {
-      fetchProduct();
+    if (product?.category) {
+      setLoadingSimilar(true);
+      productsAPI.getSimilar(product.category, id!)
+        .then(response => setSimilarProducts(response.data.slice(0, 8)))
+        .catch(() => setSimilarProducts([]))
+        .finally(() => setLoadingSimilar(false));
     }
-  }, [id]);
-
-  if (loading) {
-    return <div className="text-center py-8">Loading product...</div>;
-  }
+  }, [id, product?.category]);
 
   if (!product) {
-    return <div className="text-center py-8">Product not found</div>;
+    return <div className="text-center py-8"></div>;
   }
 
   const getProductImages = () => {
@@ -176,16 +152,20 @@ const ProductView = () => {
       </div>
       
       {/* Similar Products Section */}
-      {similarProducts.length > 0 && (
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold _text-default mb-6">Similar Products</h2>
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold _text-default mb-6">Similar Products</h2>
+        {loadingSimilar ? (
+          <div className="text-center py-8">Loading similar products...</div>
+        ) : similarProducts.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {similarProducts.map((similarProduct) => (
               <ProductCard key={similarProduct.id} product={similarProduct} />
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="text-center py-8 text-gray-500">No similar products found</div>
+        )}
+      </div>
     </div>
   );
 };

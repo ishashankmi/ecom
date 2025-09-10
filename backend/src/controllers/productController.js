@@ -3,7 +3,39 @@ import path from 'path';
 
 export const getProducts = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM products ORDER BY created_at DESC');
+    const { category, categoryId, exclude, limit } = req.query;
+    
+    let query = 'SELECT p.*, c.name as category FROM products p LEFT JOIN categories c ON p.category_id = c.id';
+    const params = [];
+    const conditions = [];
+    
+    if (category && category !== 'undefined') {
+      conditions.push(`c.name = $${params.length + 1}`);
+      params.push(category);
+    }
+    
+    if (categoryId) {
+      conditions.push(`p.category_id = $${params.length + 1}`);
+      params.push(categoryId);
+    }
+    
+    if (exclude) {
+      conditions.push(`p.id != $${params.length + 1}`);
+      params.push(exclude);
+    }
+    
+    if (conditions.length > 0) {
+      query += ' WHERE ' + conditions.join(' AND ');
+    }
+    
+    query += ' ORDER BY p.created_at DESC';
+    
+    if (limit) {
+      query += ` LIMIT $${params.length + 1}`;
+      params.push(parseInt(limit));
+    }
+    
+    const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -13,7 +45,10 @@ export const getProducts = async (req, res) => {
 export const getProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
+    const result = await pool.query(
+      'SELECT p.*, c.name as category FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.id = $1', 
+      [id]
+    );
     
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Product not found' });
