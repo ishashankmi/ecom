@@ -1,10 +1,11 @@
 import express from 'express';
-import { register, login, verifyToken } from '../controllers/authController.js';
+import { register, login, verifyToken, logout } from '../controllers/authController.js';
 
 const router = express.Router();
 
 router.post('/register', register);
 router.post('/login', login);
 router.get('/verify', verifyToken);
+router.post('/logout', logout);
 
 export default router;

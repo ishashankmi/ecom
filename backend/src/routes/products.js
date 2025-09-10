@@ -2,6 +2,7 @@ import express from 'express';
 import { getProducts, getProduct, createProduct, updateProduct, deleteProduct, searchProducts } from '../controllers/productController.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
+
 const router = express.Router();
 
 router.get('/search', searchProducts);

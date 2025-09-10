@@ -1,4 +1,5 @@
 import pool from '../db.js';
+import path from 'path';
 
 export const getProducts = async (req, res) => {
   try {
@@ -26,11 +27,41 @@ export const getProduct = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
-    const { name, price, mrp, category, stock, description, image } = req.body;
+    const { 
+      name, brand, sales_prices, mrp, category, batch_no, expiry_date,
+      description, weight, sku, hsn, stock, price, images
+    } = req.body;
+    
+    let imagePaths = [];
+    if (images && Array.isArray(images)) {
+      const fs = await import('fs');
+      imagePaths = images.map((base64Image, index) => {
+        if (base64Image.startsWith('data:image/')) {
+          const matches = base64Image.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
+          if (matches) {
+            const ext = matches[1];
+            const data = matches[2];
+            const filename = `${Date.now()}-${index}.${ext}`;
+            const filepath = `uploads/${filename}`;
+            fs.writeFileSync(filepath, Buffer.from(data, 'base64'));
+            return `/uploads/${filename}`;
+          }
+        }
+        return base64Image;
+      });
+    }
+    
+    const imagePath = imagePaths.length > 0 ? imagePaths[0] : '/uploads/placeholder.png';
     
     const result = await pool.query(
-      'INSERT INTO products (name, price, mrp, category, stock, description, image) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-      [name, price, mrp, category, stock, description, image]
+      `INSERT INTO products (
+        name, brand, sales_prices, mrp, category, batch_no, expiry_date,
+        description, weight, sku, hsn, images, stock, price, image
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *`,
+      [
+        name, brand, JSON.stringify(sales_prices), mrp, category, batch_no, expiry_date,
+        description, weight, sku, hsn, JSON.stringify(imagePaths), stock, price, imagePath
+      ]
     );
     
     res.status(201).json(result.rows[0]);
@@ -42,12 +73,38 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, price, mrp, category, stock, description, image } = req.body;
+    const { 
+      name, brand, sales_prices, mrp, category, batch_no, expiry_date,
+      description, weight, sku, hsn, stock, price
+    } = req.body;
     
-    const result = await pool.query(
-      'UPDATE products SET name = $1, price = $2, mrp = $3, category = $4, stock = $5, description = $6, image = $7 WHERE id = $8 RETURNING *',
-      [name, price, mrp, category, stock, description, image, id]
-    );
+    const images = req.files ? req.files.map(file => `/uploads/${file.filename}`) : undefined;
+    const imagePath = images && images.length > 0 ? images[0] : undefined;
+    
+    let query, values;
+    if (images) {
+      query = `UPDATE products SET 
+        name = $1, brand = $2, sales_prices = $3, mrp = $4, category = $5, 
+        batch_no = $6, expiry_date = $7, description = $8, weight = $9, 
+        sku = $10, hsn = $11, images = $12, stock = $13, price = $14, image = $15
+      WHERE id = $16 RETURNING *`;
+      values = [
+        name, brand, JSON.stringify(sales_prices), mrp, category, batch_no, expiry_date,
+        description, weight, sku, hsn, JSON.stringify(images), stock, price, imagePath, id
+      ];
+    } else {
+      query = `UPDATE products SET 
+        name = $1, brand = $2, sales_prices = $3, mrp = $4, category = $5, 
+        batch_no = $6, expiry_date = $7, description = $8, weight = $9, 
+        sku = $10, hsn = $11, stock = $12, price = $13
+      WHERE id = $14 RETURNING *`;
+      values = [
+        name, brand, JSON.stringify(sales_prices), mrp, category, batch_no, expiry_date,
+        description, weight, sku, hsn, stock, price, id
+      ];
+    }
+    
+    const result = await pool.query(query, values);
     
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Product not found' });
