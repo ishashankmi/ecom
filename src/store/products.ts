@@ -1,15 +1,30 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { productsAPI } from '../services/api';
 
+interface SalesPrice {
+  quantity: number;
+  price: number;
+}
+
 interface Product {
   id: string;
   name: string;
-  price: number;
+  brand?: string;
+  sales_prices?: SalesPrice[];
   mrp: number;
   category: string;
-  stock: number;
+  batch_no?: string;
+  expiry_date?: string;
   description: string;
+  weight?: string;
+  sku?: string;
+  hsn?: string;
+  images?: string[];
+  stock: number;
+  price: number;
   image: string;
+  created_at?: string;
+  modified_at?: string;
 }
 
 interface ProductsState {

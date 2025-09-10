@@ -9,13 +9,33 @@ type InitialState = {
   discount: number;
 };
 
-const initialState: InitialState = {
-  cartItems: [],
-  totalQuantity: 0,
-  totalAmount: 0,
-  billAmount: 0,
-  discount: 0
+const loadCartFromStorage = (): InitialState => {
+  try {
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      return JSON.parse(savedCart);
+    }
+  } catch (error) {
+    console.error('Error loading cart from localStorage:', error);
+  }
+  return {
+    cartItems: [],
+    totalQuantity: 0,
+    totalAmount: 0,
+    billAmount: 0,
+    discount: 0
+  };
 };
+
+const saveCartToStorage = (state: InitialState) => {
+  try {
+    localStorage.setItem('cart', JSON.stringify(state));
+  } catch (error) {
+    console.error('Error saving cart to localStorage:', error);
+  }
+};
+
+const initialState: InitialState = loadCartFromStorage();
 
 const cartSlice = createSlice({
   name: 'cart',
@@ -53,6 +73,7 @@ const cartSlice = createSlice({
         (total, item) => total + (item.product.mrp - item.product.price) * item.quantity,
         0
       );
+      saveCartToStorage(state);
     },
     removeItem: (state, action) => {
       const id = action.payload;
@@ -84,6 +105,7 @@ const cartSlice = createSlice({
         (total, item) => total + (item.product.mrp - item.product.price) * item.quantity,
         0
       );
+      saveCartToStorage(state);
     },
     clearCart: (state) => {
       state.cartItems = [];
@@ -91,6 +113,7 @@ const cartSlice = createSlice({
       state.totalAmount = 0;
       state.billAmount = 0;
       state.discount = 0;
+      saveCartToStorage(state);
     }
   },
 });

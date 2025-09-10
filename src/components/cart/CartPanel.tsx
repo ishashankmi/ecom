@@ -15,7 +15,7 @@ const CartPanelItem = (props: CartItem) => {
     <div className="flex p-4 gap-4 border-t _border-muted">
       <div>
         <div className="h-[72px] w-[72px] border rounded-[4px] overflow-hidden">
-          <img src={image} alt="" className="h-full w-full" />
+          <img src={image ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${image}` : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}/uploads/placeholder.png`} alt="" className="h-full w-full object-cover" />
         </div>
       </div>
       <div className="text-left flex flex-col flex-1">

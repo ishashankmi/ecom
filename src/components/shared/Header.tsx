@@ -4,7 +4,7 @@ import { CartButton } from '../cart';
 import LocationPicker from '../LocationPicker';
 import SearchBox from '../SearchBox';
 import { useAppSelector, useAppDispatch } from '../../hooks';
-import { logout } from '../../store/auth';
+import { logoutAsync } from '../../store/auth';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const Header = () => {
 
   const handleAuthClick = () => {
     if (user) {
-      dispatch(logout());
+      dispatch(logoutAsync());
       navigate('/login');
     } else {
       navigate('/login');

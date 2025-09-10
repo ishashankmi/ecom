@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FiHome, FiSearch, FiShoppingCart, FiUser, FiList } from 'react-icons/fi';
 import { useAppSelector } from '../../hooks';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { logout } from '../../store/auth';
+import { logoutAsync } from '../../store/auth';
 
 export default function BottomNavbar() {
   const location = useLocation();
@@ -13,7 +13,7 @@ export default function BottomNavbar() {
 
   const handleUserAction = () => {
     if (user) {
-      dispatch(logout());
+      dispatch(logoutAsync());
       navigate('/');
     } else {
       navigate('/login');

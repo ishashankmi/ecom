@@ -29,8 +29,8 @@ export default function Cart() {
           {cartItems.map(item => (
             <div key={item.product.id} className="bg-white p-4 rounded-lg shadow-sm flex items-center">
               <img 
-                src={item.product.image} 
-                alt={item.product.name}
+                src={item.product.image ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${item.product.image}` : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}/uploads/placeholder.png`} 
+                alt={item.product.title}
                 className="w-16 h-16 object-cover rounded-lg mr-4"
               />
               

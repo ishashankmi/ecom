@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authAPI } from '../services/api';
+import { cookieUtils } from '../utils/cookies';
 
 interface User {
   id: string;
@@ -18,8 +19,8 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  user: null,
-  token: localStorage.getItem('token'),
+  user: cookieUtils.getUser(),
+  token: cookieUtils.getToken() || null,
   loading: false,
   error: null,
   isVerifying: false,
@@ -29,7 +30,8 @@ export const login = createAsyncThunk(
   'auth/login',
   async ({ email, password }: { email: string; password: string }) => {
     const response = await authAPI.login({ email, password });
-    localStorage.setItem('token', response.data.token);
+    cookieUtils.setToken(response.data.token);
+    cookieUtils.setUser(response.data.user);
     return response.data;
   }
 );
@@ -38,7 +40,8 @@ export const register = createAsyncThunk(
   'auth/register',
   async (userData: { name: string; email: string; phone: string; password: string }) => {
     const response = await authAPI.register(userData);
-    localStorage.setItem('token', response.data.token);
+    cookieUtils.setToken(response.data.token);
+    cookieUtils.setUser(response.data.user);
     return response.data;
   }
 );
@@ -46,10 +49,19 @@ export const register = createAsyncThunk(
 export const verifyToken = createAsyncThunk(
   'auth/verifyToken',
   async () => {
-    const token = localStorage.getItem('token');
+    const token = cookieUtils.getToken();
     if (!token) throw new Error('No token found');
     const response = await authAPI.verifyToken();
+    cookieUtils.setUser(response.data.user);
     return response.data;
+  }
+);
+
+export const logoutAsync = createAsyncThunk(
+  'auth/logout',
+  async () => {
+    await authAPI.logout();
+    cookieUtils.clearAll();
   }
 );
 
@@ -60,7 +72,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
-      localStorage.removeItem('token');
+      cookieUtils.clearAll();
     },
     clearError: (state) => {
       state.error = null;
@@ -106,7 +118,11 @@ const authSlice = createSlice({
         state.isVerifying = false;
         state.user = null;
         state.token = null;
-        localStorage.removeItem('token');
+        cookieUtils.clearAll();
+      })
+      .addCase(logoutAsync.fulfilled, (state) => {
+        state.user = null;
+        state.token = null;
       });
   },
 });

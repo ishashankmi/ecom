@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks';
-import { logout } from '../../store/auth';
+import { logoutAsync } from '../../store/auth';
 import ProductManager from '../../components/admin/ProductManager';
 import OrderManager from '../../components/admin/OrderManager';
 
@@ -25,7 +25,7 @@ export default function AdminDashboard() {
             <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
             <button 
               onClick={() => {
-                dispatch(logout());
+                dispatch(logoutAsync());
                 navigate('/login');
               }}
               className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"

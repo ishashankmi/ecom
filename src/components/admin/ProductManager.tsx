@@ -5,14 +5,21 @@ import { z } from 'zod';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { fetchProducts, createProduct, updateProduct, deleteProduct } from '../../store/products';
 import { toast } from 'react-toastify';
+import MultiImageUpload from './MultiImageUpload';
 
 const productSchema = z.object({
   name: z.string().min(1, 'Name is required'),
+  brand: z.string().optional(),
   price: z.number().min(0, 'Price must be positive'),
   mrp: z.number().min(0, 'MRP must be positive'),
   category: z.string().min(1, 'Category is required'),
-  stock: z.number().min(0, 'Stock must be positive'),
+  batch_no: z.string().optional(),
+  expiry_date: z.string().optional(),
   description: z.string().min(10, 'Description must be at least 10 characters'),
+  weight: z.string().optional(),
+  sku: z.string().optional(),
+  hsn: z.string().optional(),
+  stock: z.number().min(0, 'Stock must be positive'),
 });
 
 type ProductData = z.infer<typeof productSchema>;
@@ -21,6 +28,7 @@ export default function ProductManager() {
   const dispatch = useAppDispatch();
   const { products, loading } = useAppSelector(state => state.products);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  const [productImages, setProductImages] = useState<string[]>([]);
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ProductData>({
     resolver: zodResolver(productSchema),
   });
@@ -31,15 +39,22 @@ export default function ProductManager() {
 
   const onSubmit = async (data: ProductData) => {
     try {
+      const productData = {
+        ...data,
+        images: productImages,
+        image: productImages[0] || '/uploads/placeholder.png'
+      };
+      
       if (editingProduct) {
-        await dispatch(updateProduct({ id: editingProduct, ...data, image: '/categories/1.avif' })).unwrap();
+        await dispatch(updateProduct({ id: editingProduct, ...productData })).unwrap();
         toast.success('Product updated successfully!');
         setEditingProduct(null);
       } else {
-        await dispatch(createProduct({ ...data, image: '/categories/1.avif' })).unwrap();
+        await dispatch(createProduct(productData)).unwrap();
         toast.success('Product added successfully!');
       }
       reset();
+      setProductImages([]);
     } catch (error) {
       toast.error(editingProduct ? 'Failed to update product' : 'Failed to add product');
     }
@@ -48,11 +63,23 @@ export default function ProductManager() {
   const handleEdit = (product: any) => {
     setEditingProduct(product.id);
     setValue('name', product.name);
+    setValue('brand', product.brand || '');
     setValue('price', product.price);
     setValue('mrp', product.mrp);
     setValue('category', product.category);
-    setValue('stock', product.stock);
+    setValue('batch_no', product.batch_no || '');
+    setValue('expiry_date', product.expiry_date || '');
     setValue('description', product.description);
+    setValue('weight', product.weight || '');
+    setValue('sku', product.sku || '');
+    setValue('hsn', product.hsn || '');
+    setValue('stock', product.stock);
+    
+    const images = Array.isArray(product.images) ? product.images : [];
+    if (product.image && !images.includes(product.image)) {
+      images.unshift(product.image);
+    }
+    setProductImages(images);
   };
 
   const handleDelete = async (id: string) => {
@@ -69,6 +96,7 @@ export default function ProductManager() {
   const cancelEdit = () => {
     setEditingProduct(null);
     reset();
+    setProductImages([]);
   };
 
   return (
@@ -80,44 +108,100 @@ export default function ProductManager() {
           <h3 className="text-lg font-semibold mb-4">{editingProduct ? 'Edit Product' : 'Add New Product'}</h3>
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <input
-                {...register('name')}
-                placeholder="Product Name"
-                className="w-full p-3 border rounded-lg"
-              />
-              {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <input
+                  {...register('name')}
+                  placeholder="Product Name"
+                  className="w-full p-3 border rounded-lg"
+                />
+                {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+              </div>
+              <div>
+                <input
+                  {...register('brand')}
+                  placeholder="Brand"
+                  className="w-full p-3 border rounded-lg"
+                />
+              </div>
             </div>
 
-            <div>
-              <input
-                {...register('price', { valueAsNumber: true })}
-                type="number"
-                placeholder="Price"
-                className="w-full p-3 border rounded-lg"
-              />
-              {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
-            </div>
-
-            <div>
-              <input
-                {...register('mrp', { valueAsNumber: true })}
-                type="number"
-                placeholder="MRP"
-                className="w-full p-3 border rounded-lg"
-              />
-              {errors.mrp && <p className="text-red-500 text-sm">{errors.mrp.message}</p>}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <input
+                  {...register('price', { valueAsNumber: true })}
+                  type="number"
+                  placeholder="Price"
+                  className="w-full p-3 border rounded-lg"
+                />
+                {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
+              </div>
+              <div>
+                <input
+                  {...register('mrp', { valueAsNumber: true })}
+                  type="number"
+                  placeholder="MRP"
+                  className="w-full p-3 border rounded-lg"
+                />
+                {errors.mrp && <p className="text-red-500 text-sm">{errors.mrp.message}</p>}
+              </div>
             </div>
 
             <div>
               <select {...register('category')} className="w-full p-3 border rounded-lg">
                 <option value="">Select Category</option>
-                <option value="fruits">Fruits</option>
-                <option value="vegetables">Vegetables</option>
-                <option value="dairy">Dairy</option>
-                <option value="snacks">Snacks</option>
+                <option value="waterproofing">Waterproofing</option>
+                <option value="adhesive chemicals">Adhesive Chemicals</option>
+                <option value="tools and machines">Tools and Machines</option>
+                <option value="stone polishing">Stone Polishing</option>
+                <option value="nail/floor/stone protection">Nail/Floor/Stone Protection</option>
+                <option value="epoxy">Epoxy</option>
+                <option value="accessories">Accessories</option>
+                <option value="house maintenance">House Maintenance</option>
               </select>
               {errors.category && <p className="text-red-500 text-sm">{errors.category.message}</p>}
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <input
+                  {...register('batch_no')}
+                  placeholder="Batch No"
+                  className="w-full p-3 border rounded-lg"
+                />
+              </div>
+              <div>
+                <input
+                  {...register('expiry_date')}
+                  type="date"
+                  placeholder="Expiry Date"
+                  className="w-full p-3 border rounded-lg"
+                />
+              </div>
+              <div>
+                <input
+                  {...register('weight')}
+                  placeholder="Weight"
+                  className="w-full p-3 border rounded-lg"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <input
+                  {...register('sku')}
+                  placeholder="SKU"
+                  className="w-full p-3 border rounded-lg"
+                />
+              </div>
+              <div>
+                <input
+                  {...register('hsn')}
+                  placeholder="HSN Code"
+                  className="w-full p-3 border rounded-lg"
+                />
+              </div>
             </div>
 
             <div>
@@ -138,6 +222,17 @@ export default function ProductManager() {
                 className="w-full p-3 border rounded-lg"
               />
               {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Product Images
+              </label>
+              <MultiImageUpload
+                images={productImages}
+                onChange={setProductImages}
+                maxImages={5}
+              />
             </div>
 
             <div className="flex gap-2">

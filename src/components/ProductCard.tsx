@@ -29,7 +29,7 @@ const ProductCard = ({ product }: { product: any }) => {
         className="h-[154px] w-full cursor-pointer"
         onClick={handleProductClick}
       >
-        <img src={image} alt="" className="h-full w-full p-2 object-contain" />
+        <img src={image ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${image}` : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}/uploads/placeholder.png`} alt="" className="h-full w-full p-2 object-contain" />
       </div>
       <div className="overflow-hidden text-left flex flex-col flex-1 px-2 pb-2">
         <div 

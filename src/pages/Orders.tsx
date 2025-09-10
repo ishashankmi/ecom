@@ -62,7 +62,7 @@ export default function Orders() {
                   {order.items.map((item: any, index: number) => (
                     <div key={index} className="flex items-center text-sm">
                       <img 
-                        src={item.image} 
+                        src={item.image ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${item.image}` : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}/uploads/placeholder.png`} 
                         alt={item.name}
                         className="w-8 h-8 object-cover rounded mr-3"
                       />

@@ -8,6 +8,8 @@ export const authAPI = {
     api.post('/auth/register', userData),
   
   verifyToken: () => api.get('/auth/verify'),
+  
+  logout: () => api.post('/auth/logout'),
 };
 
 export const productsAPI = {
@@ -26,4 +28,9 @@ export const ordersAPI = {
     api.post('/orders', orderData),
   
   getAll: () => api.get('/orders'),
+};
+
+export const categoriesAPI = {
+  getAll: () => api.get('/categories'),
+  create: (category: any) => api.post('/categories', category),
 };

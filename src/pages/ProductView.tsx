@@ -9,6 +9,7 @@ const ProductView = () => {
   const [product, setProduct] = useState<any>(null);
   const [similarProducts, setSimilarProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -51,11 +52,34 @@ const ProductView = () => {
     return <div className="text-center py-8">Product not found</div>;
   }
 
+  const getProductImages = () => {
+    const images = [];
+    if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+      images.push(...product.images);
+    } else if (product.image) {
+      images.push(product.image);
+    } else {
+      images.push('/uploads/placeholder.png');
+    }
+    return images;
+  };
+
+  const getCurrentImage = () => {
+    const images = getProductImages();
+    return images[selectedImageIndex] || images[0];
+  };
+
+  const getImageUrl = (imagePath: string) => {
+    if (!imagePath) return `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}/uploads/placeholder.png`;
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${imagePath}`;
+  };
+
   const cartProduct = {
     id: product.id.toString(),
     title: product.name,
     subTitle: product.category,
-    image: product.image,
+    image: getCurrentImage(),
     price: product.price,
     mrp: product.mrp,
   };
@@ -66,14 +90,34 @@ const ProductView = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
           {/* Left side - Product Images */}
           <div className="space-y-4">
-            <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden">
+            <div className="h-80 bg-gray-50 rounded-lg overflow-hidden">
               <img 
-                src={product.image} 
+                src={getImageUrl(getCurrentImage())} 
                 alt={product.name} 
                 className="w-full h-full object-contain p-4" 
               />
             </div>
-            {/* Additional product images could go here */}
+            
+            {/* Image thumbnails */}
+            {getProductImages().length > 1 && (
+              <div className="flex gap-2 overflow-x-auto">
+                {getProductImages().map((image, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImageIndex(index)}
+                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 ${
+                      selectedImageIndex === index ? 'border-primary' : 'border-gray-200'
+                    }`}
+                  >
+                    <img 
+                      src={getImageUrl(image)} 
+                      alt={`${product.name} ${index + 1}`}
+                      className="w-full h-full object-cover" 
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           
           {/* Right side - Product Details */}
@@ -100,7 +144,7 @@ const ProductView = () => {
               
               <div className="border-t pt-4">
                 <h3 className="font-semibold _text-default mb-2">Product Details</h3>
-                <p className="_text-default leading-relaxed">{product.description}</p>
+                <p className="_text-default text-sm leading-normal">{product.description}</p>
               </div>
               
               <div className="flex items-center gap-2 text-sm">

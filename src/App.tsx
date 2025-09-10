@@ -6,12 +6,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import BottomNavbar from './components/mobile/BottomNavbar';
 import { useAppDispatch } from './hooks/useAppDispatch';
 import { verifyToken } from './store/auth';
+import { cookieUtils } from './utils/cookies';
 
 function App() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = cookieUtils.getToken();
     if (token) {
       dispatch(verifyToken());
     }
