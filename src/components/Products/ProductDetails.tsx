@@ -60,7 +60,7 @@ const ProductDetails = (props: any) => {
             </div>
             <div className="pb-4 hidden lg:block">
               <h4 className="font-bold _text-default text-[15px] py-3">
-                Why shop from bringit?
+                Why shop from Saras?
               </h4>
               {allFeatures.map((feat, i) => (
                 <div key={i} className="flex items-center gap-3 py-1">

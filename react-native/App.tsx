@@ -17,7 +17,7 @@ export default function App() {
       <NavigationContainer>
         <StatusBar style="auto" />
         <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'BringIt' }} />
+          <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Saras' }} />
           <Stack.Screen name="Product" component={ProductScreen} />
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />

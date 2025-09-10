@@ -22,7 +22,7 @@ const Error404 = () => {
             </small>
             <br />
             <small className="text-[#0c831f] cursor-pointer">
-              Learn about bringit
+              Learn about Saras
             </small>
           </p>
         </div>

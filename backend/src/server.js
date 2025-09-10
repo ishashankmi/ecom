@@ -34,7 +34,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/categories', categoryRoutes);
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'BringIt API is running' });
+  res.json({ status: 'OK', message: 'Saras API is running' });
 });
 
 // Error handling middleware

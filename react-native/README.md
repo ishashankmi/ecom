@@ -1,6 +1,6 @@
-# BringIt Mobile - React Native App
+# Saras Mobile - React Native App
 
-A React Native version of the BringIt grocery delivery app built with Expo.
+A React Native version of the Saras grocery delivery app built with Expo.
 
 ## Features
 

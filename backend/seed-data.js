@@ -9,7 +9,7 @@ const seedData = async () => {
     
     const adminResult = await pool.query(`
       INSERT INTO users (name, email, phone, password, role) 
-      VALUES ('Admin User', 'admin@bringit.com', '9999999999', $1, 'admin')
+      VALUES ('Admin User', 'admin@saras.com', '9999999999', $1, 'admin')
       ON CONFLICT (email) DO NOTHING RETURNING id
     `, [adminPassword]);
 
@@ -108,7 +108,7 @@ const seedData = async () => {
     }
 
     console.log('Seed data inserted successfully');
-    console.log('Admin login: admin@bringit.com / admin123');
+    console.log('Admin login: admin@Saras.com / admin123');
     console.log('User login: john@example.com / user123');
     process.exit(0);
   } catch (error) {

@@ -84,7 +84,7 @@ const PaymentPartners = [
   },
   {
     logoName: '',
-    alt: 'bringIt cash',
+    alt: 'Saras cash',
   },
 ];
 

@@ -3,7 +3,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: bringit-postgres
+    container_name: saras-postgres
     environment:
       POSTGRES_DB: mydb
       POSTGRES_USER: myuser
@@ -21,7 +21,7 @@ services:
   backend:
     build:
       context: ./backend
-    container_name: bringit-backend
+    container_name: saras-backend
     environment:
       PORT: 3002
       DB_HOST: postgres
@@ -42,7 +42,7 @@ services:
   seed:
     build:
       context: ./backend
-    container_name: bringit-seed
+    container_name: saras-seed
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -60,7 +60,7 @@ services:
   frontend:
     build:
       context: .
-    container_name: bringit-frontend
+    container_name: saras-frontend
     environment:
       VITE_API_URL: http://localhost:3002/api
     ports:

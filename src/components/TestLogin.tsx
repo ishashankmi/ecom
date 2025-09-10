@@ -7,7 +7,7 @@ export default function TestLogin() {
   const testAdminLogin = async () => {
     try {
       const result = await dispatch(login({
-        email: 'admin@bringit.com',
+        email: 'admin@Saras.com',
         password: 'admin123'
       })).unwrap();
       console.log('Test login result:', result);

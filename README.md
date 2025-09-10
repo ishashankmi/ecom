@@ -1,6 +1,6 @@
-# BringIt (just like Blinkit) - v2.0 🚀
+# Saras (just like Blinkit) - v2.0 🚀
 
-BringIt is a modern, upgraded version of BlinkIt clone - an online supermarket application to buy Fruits, Veggies, Snacks, Milk & more with safe & hygienic home delivery.
+Saras is a modern, upgraded version of BlinkIt clone - an online supermarket application to buy Fruits, Veggies, Snacks, Milk & more with safe & hygienic home delivery.
 
 ## ✨ Features
 - Browse through various product categories

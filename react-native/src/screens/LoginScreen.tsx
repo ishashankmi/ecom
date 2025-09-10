@@ -24,7 +24,7 @@ const LoginScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to BringIt</Text>
+      <Text style={styles.title}>Welcome to Saras</Text>
       
       <View style={styles.form}>
         <TextInput

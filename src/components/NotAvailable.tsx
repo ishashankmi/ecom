@@ -12,7 +12,7 @@ const NotAvailable = (props: Props) => {
         <div className="flex flex-col justify-center max-w-lg">
           <h2 className="font-bold text-3xl mt-6 md:mt-0">Sorry!</h2>
           <p className="mt-3 mb-4 leading-snug font-medium text-lg _text-default">
-            For demo BringIt uses partial (sample) data from BlinkIt. So details
+            For demo Saras uses partial (sample) data from BlinkIt. So details
             for all the products are not available.
           </p>
 
@@ -25,7 +25,7 @@ const NotAvailable = (props: Props) => {
             </small>
             <br />
             <small className="text-[#0c831f] cursor-pointer">
-              Learn about bringit
+              Learn about Saras
             </small>
           </p>
         </div>

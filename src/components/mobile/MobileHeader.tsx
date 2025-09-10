@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../hooks';
 import { useState, useEffect } from 'react';
 import { productsAPI } from '../../services/api';
+import LocationPicker from '../LocationPicker';
 
 export default function MobileHeader() {
   const { totalQuantity } = useAppSelector(state => state.cart);
@@ -31,16 +32,18 @@ export default function MobileHeader() {
   }, [query]);
 
   return (
-    <div className="md:hidden fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between z-50">
-      <div className="flex items-center">
-        <Link to="/">
-          <span className="font-black text-2xl text-yellow-400 tracking-tight">
-            bring<strong className="text-green-600">It</strong>
-          </span>
-        </Link>
-      </div>
-      
-      <div className="flex items-center space-x-4">
+    <>
+      <div className="md:hidden fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between z-50">
+        <div className="flex items-center gap-4">
+          <Link to="/">
+            <span className="font-black text-xl text-yellow-400 tracking-tight">
+              Sar<strong className="text-green-600">as</strong>
+            </span>
+          </Link>
+          <LocationPicker />
+        </div>
+        
+        <div className="flex items-center space-x-4">
         <button onClick={() => setShowSearch(!showSearch)}>
           <FiSearch size={24} />
         </button>
@@ -52,6 +55,7 @@ export default function MobileHeader() {
             </span>
           )}
         </Link>
+        </div>
       </div>
       
       {showSearch && (
@@ -91,6 +95,6 @@ export default function MobileHeader() {
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }
