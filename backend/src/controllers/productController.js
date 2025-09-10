@@ -63,9 +63,24 @@ export const getProduct = async (req, res) => {
 export const createProduct = async (req, res) => {
   try {
     const { 
-      name, brand, sales_prices, mrp, category, batch_no, expiry_date,
+      name, brand, sales_prices, mrp, category, category_id, batch_no, expiry_date,
       description, weight, sku, hsn, stock, price, images
     } = req.body;
+    
+    let categoryId = category_id;
+    
+    // If category_id is not provided but category name is, look up the category_id
+    if (!categoryId && category) {
+      const categoryResult = await pool.query('SELECT id FROM categories WHERE name = $1', [category]);
+      if (categoryResult.rows.length === 0) {
+        return res.status(400).json({ error: `Category '${category}' not found` });
+      }
+      categoryId = categoryResult.rows[0].id;
+    }
+    
+    if (!categoryId) {
+      return res.status(400).json({ error: 'category_id or category name is required' });
+    }
     
     let imagePaths = [];
     if (images && Array.isArray(images)) {
@@ -90,11 +105,11 @@ export const createProduct = async (req, res) => {
     
     const result = await pool.query(
       `INSERT INTO products (
-        name, brand, sales_prices, mrp, category, batch_no, expiry_date,
+        name, brand, sales_prices, mrp, category_id, category, batch_no, expiry_date,
         description, weight, sku, hsn, images, stock, price, image
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *`,
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING *`,
       [
-        name, brand, JSON.stringify(sales_prices), mrp, category, batch_no, expiry_date,
+        name, brand, JSON.stringify(sales_prices), mrp, categoryId, category, batch_no, expiry_date,
         description, weight, sku, hsn, JSON.stringify(imagePaths), stock, price, imagePath
       ]
     );
@@ -109,9 +124,20 @@ export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const { 
-      name, brand, sales_prices, mrp, category, batch_no, expiry_date,
+      name, brand, sales_prices, mrp, category, category_id, batch_no, expiry_date,
       description, weight, sku, hsn, stock, price
     } = req.body;
+    
+    let categoryId = category_id;
+    
+    // If category_id is not provided but category name is, look up the category_id
+    if (!categoryId && category) {
+      const categoryResult = await pool.query('SELECT id FROM categories WHERE name = $1', [category]);
+      if (categoryResult.rows.length === 0) {
+        return res.status(400).json({ error: `Category '${category}' not found` });
+      }
+      categoryId = categoryResult.rows[0].id;
+    }
     
     const images = req.files ? req.files.map(file => `/uploads/${file.filename}`) : undefined;
     const imagePath = images && images.length > 0 ? images[0] : undefined;
@@ -119,22 +145,22 @@ export const updateProduct = async (req, res) => {
     let query, values;
     if (images) {
       query = `UPDATE products SET 
-        name = $1, brand = $2, sales_prices = $3, mrp = $4, category = $5, 
-        batch_no = $6, expiry_date = $7, description = $8, weight = $9, 
-        sku = $10, hsn = $11, images = $12, stock = $13, price = $14, image = $15
-      WHERE id = $16 RETURNING *`;
+        name = $1, brand = $2, sales_prices = $3, mrp = $4, category_id = $5, category = $6, 
+        batch_no = $7, expiry_date = $8, description = $9, weight = $10, 
+        sku = $11, hsn = $12, images = $13, stock = $14, price = $15, image = $16
+      WHERE id = $17 RETURNING *`;
       values = [
-        name, brand, JSON.stringify(sales_prices), mrp, category, batch_no, expiry_date,
+        name, brand, JSON.stringify(sales_prices), mrp, categoryId, category, batch_no, expiry_date,
         description, weight, sku, hsn, JSON.stringify(images), stock, price, imagePath, id
       ];
     } else {
       query = `UPDATE products SET 
-        name = $1, brand = $2, sales_prices = $3, mrp = $4, category = $5, 
-        batch_no = $6, expiry_date = $7, description = $8, weight = $9, 
-        sku = $10, hsn = $11, stock = $12, price = $13
-      WHERE id = $14 RETURNING *`;
+        name = $1, brand = $2, sales_prices = $3, mrp = $4, category_id = $5, category = $6, 
+        batch_no = $7, expiry_date = $8, description = $9, weight = $10, 
+        sku = $11, hsn = $12, stock = $13, price = $14
+      WHERE id = $15 RETURNING *`;
       values = [
-        name, brand, JSON.stringify(sales_prices), mrp, category, batch_no, expiry_date,
+        name, brand, JSON.stringify(sales_prices), mrp, categoryId, category, batch_no, expiry_date,
         description, weight, sku, hsn, stock, price, id
       ];
     }

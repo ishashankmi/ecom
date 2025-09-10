@@ -32,6 +32,7 @@ const initDB = async () => {
         sales_prices JSONB,
         mrp DECIMAL(10,2) NOT NULL,
         category_id INTEGER NOT NULL REFERENCES categories(id),
+        category VARCHAR(100) NOT NULL,
         batch_no VARCHAR(100),
         expiry_date DATE,
         description TEXT,
@@ -47,9 +48,28 @@ const initDB = async () => {
       )
     `);
 
-    // Remove old category column if it exists
+    // Add category_id column if it doesn't exist
     await pool.query(`
-      ALTER TABLE products DROP COLUMN IF EXISTS category
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS category_id INTEGER
+    `);
+    
+    // Add category column if it doesn't exist
+    await pool.query(`
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS category VARCHAR(100)
+    `);
+    
+    // Add foreign key constraint if it doesn't exist
+    await pool.query(`
+      DO $$ 
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.table_constraints 
+          WHERE constraint_name = 'products_category_id_fkey'
+        ) THEN
+          ALTER TABLE products ADD CONSTRAINT products_category_id_fkey 
+          FOREIGN KEY (category_id) REFERENCES categories(id);
+        END IF;
+      END $$;
     `);
 
     await pool.query(`
