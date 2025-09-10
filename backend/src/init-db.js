@@ -27,7 +27,7 @@ const initDB = async () => {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS products (
         id SERIAL PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
+        name VARCHAR(255) NOT NULL UNIQUE,
         brand VARCHAR(255),
         sales_prices JSONB,
         mrp DECIMAL(10,2) NOT NULL,

@@ -5,7 +5,7 @@ import RegisterForm from '../components/auth/RegisterForm';
 
 export default function Login() {
   const location = useLocation();
-  const [isLogin, setIsLogin] = useState(location.pathname === '/login');
+  const [isLogin, setIsLogin] = useState(true);
 
   return (
     <div className="h-screen bg-gray-50 flex items-center justify-center px-4">

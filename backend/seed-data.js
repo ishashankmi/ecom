@@ -208,14 +208,18 @@ const seedData = async () => {
     ];
 
     for (const product of products) {
+      // Get category name for the product
+      const categoryResult = await pool.query('SELECT name FROM categories WHERE id = $1', [product.category_id]);
+      const categoryName = categoryResult.rows[0]?.name || 'unknown';
+      
       await pool.query(`
         INSERT INTO products (
-          name, brand, sales_prices, mrp, category_id, batch_no, expiry_date,
+          name, brand, sales_prices, mrp, category_id, category, batch_no, expiry_date,
           description, weight, sku, hsn, images, stock, price, image
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
-        ON CONFLICT DO NOTHING
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+        ON CONFLICT (name) DO NOTHING
       `, [
-        product.name, product.brand, product.sales_prices, product.mrp, product.category_id,
+        product.name, product.brand, product.sales_prices, product.mrp, product.category_id, categoryName,
         product.batch_no, product.expiry_date, product.description, product.weight,
         product.sku, product.hsn, product.images, product.stock, product.price, product.image
       ]);
