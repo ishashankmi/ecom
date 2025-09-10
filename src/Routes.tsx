@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Checkout from './pages/Checkout';
 import Cart from './pages/Cart';
 import Orders from './pages/Orders';
+import Profile from './pages/Profile';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginLayout from './components/LoginLayout';
@@ -26,6 +27,11 @@ const AppWithRouting = () => {
       <Route path="/orders" element={
         <ProtectedRoute>
           <Layout component={<Orders />} />
+        </ProtectedRoute>
+      } />
+      <Route path="/profile" element={
+        <ProtectedRoute>
+          <Layout component={<Profile />} />
         </ProtectedRoute>
       } />
       <Route path="/checkout" element={

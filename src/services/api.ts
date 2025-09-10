@@ -10,6 +10,9 @@ export const authAPI = {
   verifyToken: () => api.get('/auth/verify'),
   
   logout: () => api.post('/auth/logout'),
+  
+  updateProfile: (userData: { name: string; email: string; phone: string }) =>
+    api.put('/auth/profile', userData),
 };
 
 export const productsAPI = {

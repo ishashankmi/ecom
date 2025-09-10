@@ -13,8 +13,7 @@ export default function BottomNavbar() {
 
   const handleUserAction = () => {
     if (user) {
-      dispatch(logoutAsync());
-      navigate('/');
+      navigate('/profile');
     } else {
       navigate('/login');
     }
@@ -56,7 +55,7 @@ export default function BottomNavbar() {
           className="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-primary"
         >
           <FiUser size={20} />
-          <span className="text-xs mt-1">{user ? 'Logout' : 'Login'}</span>
+          <span className="text-xs mt-1">{user ? 'Profile' : 'Login'}</span>
         </button>
       </div>
     </div>
