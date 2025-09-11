@@ -109,7 +109,7 @@ export const createProduct = async (req, res) => {
         description, weight, sku, hsn, images, stock, price, image
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING *`,
       [
-        name, brand, JSON.stringify(sales_prices), mrp, categoryId, category, batch_no, expiry_date,
+        name, brand, JSON.stringify(sales_prices || [{ qty: 1, price }]), mrp, categoryId, category, batch_no, expiry_date,
         description, weight, sku, hsn, JSON.stringify(imagePaths), stock, price, imagePath
       ]
     );
@@ -123,10 +123,12 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log('Update product request body:', req.body);
     const { 
       name, brand, sales_prices, mrp, category, category_id, batch_no, expiry_date,
-      description, weight, sku, hsn, stock, price
+      description, weight, sku, hsn, stock, price, images
     } = req.body;
+    console.log('Extracted sales_prices:', sales_prices);
     
     let categoryId = category_id;
     
@@ -139,19 +141,36 @@ export const updateProduct = async (req, res) => {
       categoryId = categoryResult.rows[0].id;
     }
     
-    const images = req.files ? req.files.map(file => `/uploads/${file.filename}`) : undefined;
-    const imagePath = images && images.length > 0 ? images[0] : undefined;
+    let imagePaths = [];
+    if (images && Array.isArray(images)) {
+      const fs = await import('fs');
+      imagePaths = images.map((base64Image, index) => {
+        if (base64Image.startsWith('data:image/')) {
+          const matches = base64Image.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
+          if (matches) {
+            const ext = matches[1];
+            const data = matches[2];
+            const filename = `${Date.now()}-${index}.${ext}`;
+            const filepath = `uploads/${filename}`;
+            fs.writeFileSync(filepath, Buffer.from(data, 'base64'));
+            return `/uploads/${filename}`;
+          }
+        }
+        return base64Image;
+      });
+    }
+    const imagePath = imagePaths.length > 0 ? imagePaths[0] : undefined;
     
     let query, values;
-    if (images) {
+    if (imagePaths.length > 0) {
       query = `UPDATE products SET 
         name = $1, brand = $2, sales_prices = $3, mrp = $4, category_id = $5, category = $6, 
         batch_no = $7, expiry_date = $8, description = $9, weight = $10, 
         sku = $11, hsn = $12, images = $13, stock = $14, price = $15, image = $16
       WHERE id = $17 RETURNING *`;
       values = [
-        name, brand, JSON.stringify(sales_prices), mrp, categoryId, category, batch_no, expiry_date,
-        description, weight, sku, hsn, JSON.stringify(images), stock, price, imagePath, id
+        name, brand, JSON.stringify(sales_prices || [{ qty: 1, price }]), mrp, categoryId, category, batch_no, expiry_date,
+        description, weight, sku, hsn, JSON.stringify(imagePaths), stock, price, imagePath, id
       ];
     } else {
       query = `UPDATE products SET 
@@ -160,7 +179,7 @@ export const updateProduct = async (req, res) => {
         sku = $11, hsn = $12, stock = $13, price = $14
       WHERE id = $15 RETURNING *`;
       values = [
-        name, brand, JSON.stringify(sales_prices), mrp, categoryId, category, batch_no, expiry_date,
+        name, brand, JSON.stringify(sales_prices || [{ qty: 1, price }]), mrp, categoryId, category, batch_no, expiry_date,
         description, weight, sku, hsn, stock, price, id
       ];
     }

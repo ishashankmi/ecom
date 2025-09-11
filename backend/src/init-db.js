@@ -58,6 +58,11 @@ const initDB = async () => {
       ALTER TABLE products ADD COLUMN IF NOT EXISTS category VARCHAR(100)
     `);
     
+    // Add sales_prices column if it doesn't exist
+    await pool.query(`
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS sales_prices JSONB
+    `);
+    
     // Add foreign key constraint if it doesn't exist
     await pool.query(`
       DO $$ 
