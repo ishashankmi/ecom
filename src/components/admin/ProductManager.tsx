@@ -29,6 +29,7 @@ export default function ProductManager() {
   const { products, loading } = useAppSelector(state => state.products);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productImages, setProductImages] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ProductData>({
     resolver: zodResolver(productSchema),
   });
@@ -98,6 +99,12 @@ export default function ProductManager() {
     reset();
     setProductImages([]);
   };
+
+  const filteredProducts = products.filter(product => 
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.category?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="p-6">
@@ -256,13 +263,22 @@ export default function ProductManager() {
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold mb-4">Products List</h3>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Products List</h3>
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="px-3 py-2 border rounded-lg w-64"
+            />
+          </div>
           
           {loading ? (
             <div className="text-center py-8">Loading products...</div>
           ) : (
           <div className="space-y-3 max-h-96 overflow-y-auto">
-            {products.map(product => (
+            {filteredProducts.map(product => (
               <div key={product.id} className="border p-3 rounded-lg">
                 <div className="flex justify-between items-start">
                   <div>
