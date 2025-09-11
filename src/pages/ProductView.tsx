@@ -16,10 +16,12 @@ const ProductView = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    
-    if (product?.category) {
+  }, [id]);
+
+  useEffect(() => {
+    if (product?.category && id) {
       setLoadingSimilar(true);
-      productsAPI.getSimilar(product.category, id!)
+      productsAPI.getSimilar(product.category, id)
         .then(response => setSimilarProducts(response.data.slice(0, 8)))
         .catch(() => setSimilarProducts([]))
         .finally(() => setLoadingSimilar(false));

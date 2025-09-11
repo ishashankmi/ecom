@@ -21,11 +21,11 @@ const seedData = async () => {
 
     const user2Result = await pool.query(`
       INSERT INTO users (name, email, phone, password, role) 
-      VALUES ('Jane Smith', 'jane@example.com', '9876543211', $1, 'customer')
+      VALUES ('Jane Smith', 'test@test.com', '9876543211', $1, 'customer')
       ON CONFLICT (email) DO NOTHING RETURNING id
-    `, [userPassword]);
+    `, ['test123']);
 
-    // Insert categories and get their IDs
+    // Insert categories and get theiuserPasswordr IDs
     const categories = [
       { name: 'waterproofing', description: 'Waterproofing solutions and coatings' },
       { name: 'adhesive chemicals', description: 'Adhesives and bonding chemicals' },
