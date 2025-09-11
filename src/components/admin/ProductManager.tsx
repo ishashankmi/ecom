@@ -14,7 +14,6 @@ const productSchema = z.object({
   mrp: z.number().min(0, 'MRP must be positive'),
   category: z.string().min(1, 'Category is required'),
   batch_no: z.string().optional(),
-  expiry_date: z.string().optional(),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   weight: z.string().optional(),
   sku: z.string().optional(),
@@ -69,7 +68,6 @@ export default function ProductManager() {
     setValue('mrp', product.mrp);
     setValue('category', product.category);
     setValue('batch_no', product.batch_no || '');
-    setValue('expiry_date', product.expiry_date || '');
     setValue('description', product.description);
     setValue('weight', product.weight || '');
     setValue('sku', product.sku || '');
@@ -169,19 +167,11 @@ export default function ProductManager() {
               {errors.category && <p className="text-red-500 text-sm">{errors.category.message}</p>}
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <input
                   {...register('batch_no')}
                   placeholder="Batch No"
-                  className="w-full p-3 border rounded-lg"
-                />
-              </div>
-              <div>
-                <input
-                  {...register('expiry_date')}
-                  type="date"
-                  placeholder="Expiry Date"
                   className="w-full p-3 border rounded-lg"
                 />
               </div>
