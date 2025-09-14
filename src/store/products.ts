@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { productsAPI } from '../services/api';
+import { refreshCartPricing } from './cart';
 
 interface SalesPrice {
-  quantity: number;
+  qty: number;
   price: number;
 }
 
@@ -42,18 +43,31 @@ const initialState: ProductsState = {
 export const fetchProducts = createAsyncThunk('products/fetchAll', async () => {
   const response = await productsAPI.getAll();
   console.log('Products API response:', response.data);
-  return response.data;
+  const transformedProducts = response.data.map(product => ({
+    ...product,
+    sales_prices: product.sales_prices ? 
+      (typeof product.sales_prices === 'string' ? JSON.parse(product.sales_prices) : product.sales_prices) : 
+      [{ qty: 1, price: product.price }]
+  }));
+  return transformedProducts;
 });
 
 export const fetchProductsByCategory = createAsyncThunk(
   'products/fetchByCategory', 
   async (categoryId: string) => {
+    let response;
     if (categoryId === 'all') {
-      const response = await productsAPI.getAll();
-      return response.data;
+      response = await productsAPI.getAll();
+    } else {
+      response = await productsAPI.getByCategoryId(categoryId);
     }
-    const response = await productsAPI.getByCategoryId(categoryId);
-    return response.data;
+    const transformedProducts = response.data.map(product => ({
+      ...product,
+      sales_prices: product.sales_prices ? 
+        (typeof product.sales_prices === 'string' ? JSON.parse(product.sales_prices) : product.sales_prices) : 
+        [{ qty: 1, price: product.price }]
+    }));
+    return transformedProducts;
   }
 );
 

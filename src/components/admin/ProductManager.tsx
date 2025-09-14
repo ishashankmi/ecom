@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { fetchProducts, createProduct, updateProduct, deleteProduct } from '../../store/products';
+
 import { toast } from 'react-toastify';
 import MultiImageUpload from './MultiImageUpload';
 
@@ -29,6 +30,7 @@ export default function ProductManager() {
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [productImages, setProductImages] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [pricingTiers, setPricingTiers] = useState([{ qty: 1, price: 0 }]);
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ProductData>({
     resolver: zodResolver(productSchema),
   });
@@ -42,19 +44,25 @@ export default function ProductManager() {
       const productData = {
         ...data,
         images: productImages,
-        image: productImages[0] || '/uploads/placeholder.png'
+        image: productImages[0] || '/uploads/placeholder.png',
+        sales_prices: pricingTiers
       };
       
+      console.log('Sending product data:', productData);
+      
       if (editingProduct) {
-        await dispatch(updateProduct({ id: editingProduct, ...productData })).unwrap();
+        const updatedProduct = await dispatch(updateProduct({ id: editingProduct, ...productData })).unwrap();
+
+        await dispatch(fetchProducts());
         toast.success('Product updated successfully!');
         setEditingProduct(null);
       } else {
-        await dispatch(createProduct(productData)).unwrap();
+        const newProduct = await dispatch(createProduct(productData)).unwrap();
         toast.success('Product added successfully!');
       }
       reset();
       setProductImages([]);
+      setPricingTiers([{ qty: 1, price: 0 }]);
     } catch (error) {
       toast.error(editingProduct ? 'Failed to update product' : 'Failed to add product');
     }
@@ -78,7 +86,26 @@ export default function ProductManager() {
     if (product.image && !images.includes(product.image)) {
       images.unshift(product.image);
     }
-    setProductImages(images);
+    
+    // Convert database paths to full URLs for display
+    const fullUrlImages = images.map(img => {
+      if (img && !img.startsWith('data:') && !img.startsWith('http')) {
+        return `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${img}`;
+      }
+      return img;
+    });
+    
+    setProductImages(fullUrlImages);
+    
+    let salesPrices;
+    try {
+      salesPrices = product.sales_prices ? 
+        (typeof product.sales_prices === 'string' ? JSON.parse(product.sales_prices) : product.sales_prices) : 
+        [{ qty: 1, price: product.price }];
+    } catch (e) {
+      salesPrices = [{ qty: 1, price: product.price }];
+    }
+    setPricingTiers(salesPrices);
   };
 
   const handleDelete = async (id: string) => {
@@ -96,6 +123,7 @@ export default function ProductManager() {
     setEditingProduct(null);
     reset();
     setProductImages([]);
+    setPricingTiers([{ qty: 1, price: 0 }]);
   };
 
   const filteredProducts = products.filter(product => 
@@ -219,6 +247,58 @@ export default function ProductManager() {
                 className="w-full p-3 border rounded-lg"
               />
               {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Dynamic Pricing Tiers
+              </label>
+              <div className="space-y-2">
+                {pricingTiers.map((tier, index) => (
+                  <div key={`${editingProduct}-${index}`} className="flex gap-2 items-center">
+                    <input
+                      type="text"
+                      placeholder="Min Qty"
+                      key={`qty-${editingProduct}-${index}`}
+                      defaultValue={tier.qty}
+                      onChange={(e) => {
+                        const newTiers = [...pricingTiers];
+                        newTiers[index].qty = parseInt(e.target.value) || 1;
+                        setPricingTiers(newTiers);
+                      }}
+                      className="w-24 p-2 border rounded"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Price"
+                      key={`price-${editingProduct}-${index}`}
+                      defaultValue={tier.price}
+                      onChange={(e) => {
+                        const newTiers = [...pricingTiers];
+                        newTiers[index].price = parseFloat(e.target.value) || 0;
+                        setPricingTiers(newTiers);
+                      }}
+                      className="flex-1 p-2 border rounded"
+                    />
+                    {pricingTiers.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => setPricingTiers(pricingTiers.filter((_, i) => i !== index))}
+                        className="text-red-600 px-2"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setPricingTiers([...pricingTiers, { qty: 1, price: 0 }])}
+                  className="text-blue-600 text-sm"
+                >
+                  + Add Tier
+                </button>
+              </div>
             </div>
 
             <div>

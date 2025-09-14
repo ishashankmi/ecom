@@ -25,8 +25,8 @@ export default function CheckoutForm() {
       id: item.product.id,
       productId: item.product.id,
       quantity: item.quantity,
-      price: item.product.price,
-      name: item.product.name,
+      price: item.unitPrice,
+      name: item.product.title,
       image: item.product.image,
     }));
 

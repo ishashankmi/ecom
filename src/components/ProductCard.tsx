@@ -5,16 +5,53 @@ import { convertTextToURLSlug } from '../utils/helper';
 
 const ProductCard = ({ product }: { product: any }) => {
   const navigate = useNavigate();
-  const { id, name, price, mrp, image, description, category } = product;
+  
+  if (!product) return null;
+  
+  console.log('ProductCard received product:', JSON.stringify(product, null, 2));
+  const { id, name, price, mrp, image, description, category, sales_prices } = product;
+
+  const numPrice = parseFloat(price);
+  const numMrp = parseFloat(mrp);
+
+  let salesPrices;
+  try {
+    if (sales_prices && sales_prices.length > 0) {
+      const parsed = typeof sales_prices === 'string' ? JSON.parse(sales_prices) : sales_prices;
+      salesPrices = parsed.map(tier => ({ 
+        qty: tier.qty, 
+        price: tier.price, 
+        discount: tier.discount 
+      }));
+    } else {
+      // Default discount-based pricing
+      salesPrices = [
+        { qty: 1, discount: 0 },
+        { qty: 2, discount: numPrice * 0.1 }, // 10% discount at qty 2+
+        { qty: 5, discount: numPrice * 0.2 }  // 20% discount at qty 5+
+      ];
+    }
+  } catch (e) {
+    salesPrices = [
+      { qty: 1, discount: 0 },
+      { qty: 2, discount: numPrice * 0.1 },
+      { qty: 5, discount: numPrice * 0.2 }
+    ];
+  }
 
   const cartProduct: CartProduct = {
     id: id.toString(),
     title: name,
     subTitle: category,
     image: image,
-    price,
-    mrp,
+    price: numPrice,
+    mrp: numMrp,
+    sales_prices: salesPrices,
   };
+  
+  console.log('CartProduct with sales_prices:', JSON.stringify(cartProduct, null, 2));
+  
+  console.log('ProductCard creating cartProduct:', JSON.stringify(cartProduct, null, 2));
 
   const handleProductClick = () => {
     const pname = convertTextToURLSlug(name);
@@ -49,16 +86,16 @@ const ProductCard = ({ product }: { product: any }) => {
             className="cursor-pointer"
             onClick={handleProductClick}
           >
-            {price < mrp ? (
+            {numPrice < numMrp ? (
               <div className="flex flex-col">
                 <span className="text-[14px] _text-default font-semibold leading-none">
-                  ₹{price}
+                  ₹{numPrice}
                 </span>
-                <del className="text-xs text-gray-400">₹{mrp}</del>
+                <del className="text-xs text-gray-400">₹{numMrp}</del>
               </div>
             ) : (
               <div>
-                <span className="text-[14px] _text-default">₹{mrp}</span>
+                <span className="text-[14px] _text-default">₹{numMrp}</span>
               </div>
             )}
           </div>

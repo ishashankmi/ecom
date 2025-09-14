@@ -11,12 +11,30 @@ const ProductView = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [similarProducts, setSimilarProducts] = useState<any[]>([]);
   const [loadingSimilar, setLoadingSimilar] = useState(false);
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  const product = products.find(p => p.id.toString() === id);
+  const productFromStore = products.find(p => p.id.toString() === id);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [id]);
+    
+    if (productFromStore) {
+      setProduct(productFromStore);
+      setLoading(false);
+    } else if (id) {
+      setLoading(true);
+      productsAPI.getById(id)
+        .then(response => {
+          setProduct(response.data);
+          setLoading(false);
+        })
+        .catch(() => {
+          setProduct(null);
+          setLoading(false);
+        });
+    }
+  }, [id, productFromStore]);
 
   useEffect(() => {
     if (product?.category && id) {
@@ -28,8 +46,12 @@ const ProductView = () => {
     }
   }, [id, product?.category]);
 
+  if (loading) {
+    return <div className="text-center py-8">Loading product...</div>;
+  }
+
   if (!product) {
-    return <div className="text-center py-8"></div>;
+    return <div className="text-center py-8">Product not found</div>;
   }
 
   const getProductImages = () => {

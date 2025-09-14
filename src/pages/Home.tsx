@@ -4,6 +4,8 @@ import { fetchProducts, fetchProductsByCategory } from '../store/products';
 import ProductCard from '../components/ProductCard';
 import CategorySelection from '../components/CategorySelection';
 
+
+
 const Home = () => {
   const dispatch = useAppDispatch();
   const { products, loading, error } = useAppSelector(state => state.products);
@@ -11,12 +13,8 @@ const Home = () => {
   const [initialLoad, setInitialLoad] = useState(true);
 
   useEffect(() => {
-    if (products.length === 0) {
-      dispatch(fetchProducts()).finally(() => setInitialLoad(false));
-    } else {
-      setInitialLoad(false);
-    }
-  }, [dispatch, products.length]);
+    dispatch(fetchProducts()).finally(() => setInitialLoad(false));
+  }, [dispatch]);
 
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(categoryId);
@@ -46,6 +44,7 @@ const Home = () => {
         selectedCategory={selectedCategory}
       />
       
+
       <h2 className="text-2xl font-bold mb-6 capitalize">
         {selectedCategoryName}
       </h2>

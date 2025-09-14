@@ -10,7 +10,8 @@ import SuggestedItems from './SuggestedItems';
 import { shuffleItems } from '../../utils/helper';
 
 const CartPanelItem = (props: CartItem) => {
-  const { image, title, subTitle, price, mrp } = props.product;
+  const { image, title, subTitle, mrp } = props.product;
+  const { unitPrice } = props;
   return (
     <div className="flex p-4 gap-4 border-t _border-muted">
       <div>
@@ -24,16 +25,23 @@ const CartPanelItem = (props: CartItem) => {
         </div>
         <div className="text-sm _text-muted truncate mb-3">{subTitle}</div>
         <div className="flex items-center justify-between mt-auto">
-          {mrp ? (
-            <div className="flex gap-2 items-center">
-              <span className="text-[15px] text-black font-bold leading-none">
-                ₹{price}
-              </span>
-              <del className="text-[14px] text-gray-500">₹{mrp}</del>
+          {unitPrice < mrp ? (
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-2 items-center">
+                <span className="text-[15px] text-black font-bold leading-none">
+                  ₹{unitPrice}
+                </span>
+                <del className="text-[14px] text-gray-500">₹{mrp}</del>
+              </div>
+              {props.quantity > 1 && (
+                <div className="text-xs text-green-600">
+                  Bulk price applied!
+                </div>
+              )}
             </div>
           ) : (
             <div>
-              <span className="text-[14px] _text-default">₹{price}</span>
+              <span className="text-[14px] _text-default">₹{unitPrice}</span>
             </div>
           )}
           <div className="h-9 w-[90px]">

@@ -5,7 +5,7 @@ import { FiPlus, FiMinus, FiTrash2 } from 'react-icons/fi';
 
 export default function Cart() {
   const dispatch = useAppDispatch();
-  const { cartItems, totalQuantity, billAmount } = useAppSelector(state => state.cart);
+  const { cartItems, totalQuantity, billAmount, totalAmount, discount } = useAppSelector(state => state.cart);
 
   if (cartItems.length === 0) {
     return (
@@ -35,8 +35,14 @@ export default function Cart() {
               />
               
               <div className="flex-1">
-                <h3 className="font-medium">{item.product.name}</h3>
-                <p className="text-primary font-bold">₹{item.product.price}</p>
+                <h3 className="font-medium">{item.product.title}</h3>
+                <div className="flex items-center gap-2">
+                  <p className="text-primary font-bold">₹{item.unitPrice}</p>
+                  {item.unitPrice < item.product.mrp && (
+                    <p className="text-gray-400 line-through text-sm">₹{item.product.mrp}</p>
+                  )}
+                </div>
+                <p className="text-sm text-gray-600">Total: ₹{item.billPrice}</p>
               </div>
               
               <div className="flex items-center space-x-3">
@@ -50,7 +56,7 @@ export default function Cart() {
                 <span className="font-medium">{item.quantity}</span>
                 
                 <button
-                  onClick={() => dispatch(addItem(item.product))}
+                  onClick={() => dispatch(addItem({ product: item.product, quantity: 1 }))}
                   className="p-2 text-primary"
                 >
                   <FiPlus size={16} />
@@ -61,9 +67,21 @@ export default function Cart() {
         </div>
 
         <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-lg font-bold">Total: ₹{billAmount}</span>
-            <span className="text-sm text-gray-600">{totalQuantity} items</span>
+          <div className="space-y-2 mb-4">
+            <div className="flex justify-between">
+              <span>Subtotal ({totalQuantity} items)</span>
+              <span>₹{totalAmount}</span>
+            </div>
+            {discount > 0 && (
+              <div className="flex justify-between text-green-600">
+                <span>Discount</span>
+                <span>-₹{discount}</span>
+              </div>
+            )}
+            <div className="flex justify-between items-center text-lg font-bold border-t pt-2">
+              <span>Total</span>
+              <span>₹{billAmount}</span>
+            </div>
           </div>
           
           <Link

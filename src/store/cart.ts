@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { CartItem, CartProduct } from '../utils/types';
+import { CartItem, CartProduct, PricingTier } from '../utils/types';
 
 type InitialState = {
   cartItems: CartItem[];
@@ -37,42 +37,50 @@ const saveCartToStorage = (state: InitialState) => {
 
 const initialState: InitialState = loadCartFromStorage();
 
+const getDynamicPrice = (quantity: number, basePrice: number): number => {
+  const price = typeof basePrice === 'string' ? parseFloat(basePrice) : basePrice;
+  
+  if (quantity >= 2) {
+    return Math.max(0, price - 10); // ₹10 discount for 2+ items
+  }
+  
+  return price;
+};
+
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
     addItem: (state, action) => {
-      const newItem = action.payload as CartProduct;
+      const { product, quantity = 1 } = action.payload;
       const existingItem = state.cartItems.find(
-        (item) => item.product.id === newItem.id
+        (item) => item.product.id === product.id
       );
+      
       if (existingItem) {
-        existingItem.quantity++;
-        existingItem.totalPrice = existingItem.billPrice + newItem.mrp;
-        existingItem.discount = existingItem.discount + (newItem.mrp - newItem.price);
-        existingItem.billPrice = existingItem.billPrice + newItem.price;
+        const newQuantity = existingItem.quantity + quantity;
+        const unitPrice = getDynamicPrice(newQuantity, existingItem.product.price);
+        existingItem.quantity = newQuantity;
+        existingItem.unitPrice = unitPrice;
+        existingItem.billPrice = unitPrice * newQuantity;
+        existingItem.totalPrice = existingItem.product.mrp * newQuantity;
+        existingItem.discount = existingItem.totalPrice - existingItem.billPrice;
       } else {
+        const unitPrice = getDynamicPrice(quantity, product.price);
         state.cartItems.push({
-          product: newItem,
-          quantity: 1,
-          totalPrice: newItem.mrp,
-          discount: newItem.mrp - newItem.price,
-          billPrice: newItem.price
+          product,
+          quantity,
+          unitPrice,
+          billPrice: unitPrice * quantity,
+          totalPrice: product.mrp * quantity,
+          discount: (product.mrp * quantity) - (unitPrice * quantity)
         });
       }
-      state.totalQuantity++;
-      state.totalAmount = state.cartItems.reduce(
-        (total, item) => total + item.product.mrp * item.quantity,
-        0
-      );
-      state.billAmount = state.cartItems.reduce(
-        (total, item) => total + item.product.price * item.quantity,
-        0
-      );
-      state.discount = state.cartItems.reduce(
-        (total, item) => total + (item.product.mrp - item.product.price) * item.quantity,
-        0
-      );
+      
+      state.totalQuantity = state.cartItems.reduce((total, item) => total + item.quantity, 0);
+      state.totalAmount = state.cartItems.reduce((total, item) => total + item.totalPrice, 0);
+      state.billAmount = state.cartItems.reduce((total, item) => total + item.billPrice, 0);
+      state.discount = state.cartItems.reduce((total, item) => total + item.discount, 0);
       saveCartToStorage(state);
     },
     removeItem: (state, action) => {
@@ -86,25 +94,20 @@ const cartSlice = createSlice({
             (item) => item.product.id !== id
           );
         } else {
-          existingItem.quantity--;
-          existingItem.totalPrice = existingItem.totalPrice - existingItem.product.mrp;
-          existingItem.discount = existingItem.discount - (existingItem.product.mrp - existingItem.product.price);
-          existingItem.billPrice = existingItem.billPrice - existingItem.product.price;
+          const newQuantity = existingItem.quantity - 1;
+          const unitPrice = getDynamicPrice(newQuantity, existingItem.product.price);
+          existingItem.quantity = newQuantity;
+          existingItem.unitPrice = unitPrice;
+          existingItem.billPrice = unitPrice * newQuantity;
+          existingItem.totalPrice = existingItem.product.mrp * newQuantity;
+          existingItem.discount = existingItem.totalPrice - existingItem.billPrice;
         }
       }
-      state.totalQuantity--;
-      state.totalAmount = state.cartItems.reduce(
-        (total, item) => total + item.product.mrp * item.quantity,
-        0
-      );
-      state.billAmount = state.cartItems.reduce(
-        (total, item) => total + item.product.price * item.quantity,
-        0
-      );
-      state.discount = state.cartItems.reduce(
-        (total, item) => total + (item.product.mrp - item.product.price) * item.quantity,
-        0
-      );
+      
+      state.totalQuantity = state.cartItems.reduce((total, item) => total + item.quantity, 0);
+      state.totalAmount = state.cartItems.reduce((total, item) => total + item.totalPrice, 0);
+      state.billAmount = state.cartItems.reduce((total, item) => total + item.billPrice, 0);
+      state.discount = state.cartItems.reduce((total, item) => total + item.discount, 0);
       saveCartToStorage(state);
     },
     clearCart: (state) => {
@@ -114,7 +117,8 @@ const cartSlice = createSlice({
       state.billAmount = 0;
       state.discount = 0;
       saveCartToStorage(state);
-    }
+    },
+
   },
 });
 

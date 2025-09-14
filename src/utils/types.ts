@@ -214,6 +214,12 @@ export interface ProductItemDetailed {
   sliding_images: string[];
 }
 
+export type PricingTier = {
+  qty: number;
+  price?: number;
+  discount?: number;
+};
+
 export type CartProduct = {
   id: string;
   title: string;
@@ -221,6 +227,7 @@ export type CartProduct = {
   image?: string;
   price: number;
   mrp: number;
+  sales_prices?: PricingTier[];
 };
 
 export type CartItem = {
@@ -229,4 +236,5 @@ export type CartItem = {
   totalPrice: number;
   billPrice: number;
   discount: number;
+  unitPrice: number;
 };
