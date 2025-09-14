@@ -95,8 +95,14 @@ const initDB = async () => {
         order_id INTEGER REFERENCES orders(id),
         product_id INTEGER REFERENCES products(id),
         quantity INTEGER NOT NULL,
-        price DECIMAL(10,2) NOT NULL
+        price DECIMAL(10,2) NOT NULL,
+        name VARCHAR(255)
       )
+    `);
+    
+    // Add name column if it doesn't exist
+    await pool.query(`
+      ALTER TABLE order_items ADD COLUMN IF NOT EXISTS name VARCHAR(255)
     `);
 
     // Add trigger to update modified_at

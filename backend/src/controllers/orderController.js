@@ -2,54 +2,127 @@ import pool from '../db.js';
 
 export const createOrder = async (req, res) => {
   try {
-    const { items, deliveryAddress } = req.body;
+    const { items, total, delivery_address } = req.body;
     const userId = req.user.id;
-    
-    const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    
+
     const orderResult = await pool.query(
-      'INSERT INTO orders (user_id, total, delivery_address) VALUES ($1, $2, $3) RETURNING *',
-      [userId, total, deliveryAddress]
+      'INSERT INTO orders (user_id, total, delivery_address, status, payment_status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [userId, total, delivery_address, 'pending', 'pending']
     );
-    
-    const order = orderResult.rows[0];
-    
+
+    const orderId = orderResult.rows[0].id;
+
     for (const item of items) {
       await pool.query(
-        'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)',
-        [order.id, item.productId, item.quantity, item.price]
+        'INSERT INTO order_items (order_id, product_id, quantity, price, name) VALUES ($1, $2, $3, $4, $5)',
+        [orderId, item.product_id, item.quantity, item.price, item.name]
       );
     }
-    
-    res.status(201).json(order);
+
+    const orderWithItems = await pool.query(`
+      SELECT o.*, 
+        json_agg(
+          json_build_object(
+            'product_id', oi.product_id,
+            'quantity', oi.quantity,
+            'price', oi.price,
+            'name', oi.name
+          )
+        ) as items
+      FROM orders o
+      LEFT JOIN order_items oi ON o.id = oi.order_id
+      WHERE o.id = $1
+      GROUP BY o.id
+    `, [orderId]);
+
+    res.status(201).json(orderWithItems.rows[0]);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-export const getOrders = async (req, res) => {
+export const getUserOrders = async (req, res) => {
   try {
     const userId = req.user.id;
     
     const result = await pool.query(`
       SELECT o.*, 
-             json_agg(json_build_object(
-               'id', oi.id,
-               'productId', oi.product_id,
-               'quantity', oi.quantity,
-               'price', oi.price,
-               'name', p.name,
-               'image', p.image
-             )) as items
+        json_agg(
+          json_build_object(
+            'product_id', oi.product_id,
+            'quantity', oi.quantity,
+            'price', oi.price,
+            'name', oi.name
+          )
+        ) as items
       FROM orders o
       LEFT JOIN order_items oi ON o.id = oi.order_id
-      LEFT JOIN products p ON oi.product_id = p.id
       WHERE o.user_id = $1
       GROUP BY o.id
       ORDER BY o.created_at DESC
     `, [userId]);
-    
+
     res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getAllOrders = async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT o.*, 
+        json_agg(
+          json_build_object(
+            'product_id', oi.product_id,
+            'quantity', oi.quantity,
+            'price', oi.price,
+            'name', oi.name
+          )
+        ) as items
+      FROM orders o
+      LEFT JOIN order_items oi ON o.id = oi.order_id
+      GROUP BY o.id
+      ORDER BY o.created_at DESC
+    `);
+
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const result = await pool.query(
+      'UPDATE orders SET status = $1 WHERE id = $2 RETURNING *',
+      [status, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    const orderWithItems = await pool.query(`
+      SELECT o.*, 
+        json_agg(
+          json_build_object(
+            'product_id', oi.product_id,
+            'quantity', oi.quantity,
+            'price', oi.price,
+            'name', oi.name
+          )
+        ) as items
+      FROM orders o
+      LEFT JOIN order_items oi ON o.id = oi.order_id
+      WHERE o.id = $1
+      GROUP BY o.id
+    `, [id]);
+
+    res.json(orderWithItems.rows[0]);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -1,81 +1,84 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { fetchOrders } from '../store/orders';
-import { format } from 'date-fns';
+import { fetchUserOrders } from '../store/orders';
 
-export default function Orders() {
+const Orders = () => {
   const dispatch = useAppDispatch();
   const { orders, loading } = useAppSelector(state => state.orders);
 
   useEffect(() => {
-    dispatch(fetchOrders());
+    dispatch(fetchUserOrders());
   }, [dispatch]);
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'confirmed': return 'bg-blue-100 text-blue-800';
+      case 'delivered': return 'bg-green-100 text-green-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   if (loading) {
-    return (
-      <div className="h-full bg-gray-50 flex items-center justify-center">
-        <div className="text-center">Loading orders...</div>
-      </div>
-    );
+    return <div className="text-center py-8">Loading orders...</div>;
   }
 
-  if (orders.length === 0) {
+  if (!orders.length) {
     return (
-      <div className="h-full bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">No orders yet</h2>
-          <p className="text-gray-600">Start shopping to see your orders here</p>
-        </div>
+      <div className="text-center py-8">
+        <h2 className="text-xl font-semibold mb-2">No orders found</h2>
+        <p className="text-gray-600">You haven't placed any orders yet.</p>
       </div>
     );
   }
 
   return (
-    <div className="h-full bg-gray-50 overflow-y-auto">
-      <div className="max-w-4xl mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-6">Your Orders</h1>
-        
-        <div className="space-y-4">
-          {orders.map(order => (
-            <div key={order.id} className="bg-white p-4 rounded-lg shadow-sm">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h3 className="font-medium">Order #{order.id}</h3>
-                  <p className="text-sm text-gray-600">
-                    {format(new Date(order.created_at), 'MMM dd, yyyy')}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="font-bold text-green-600">₹{order.total}</p>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                    order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-blue-100 text-blue-800'
-                  }`}>
-                    {order.status}
-                  </span>
-                </div>
+    <div className="max-w-4xl mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">My Orders</h1>
+      
+      <div className="space-y-4">
+        {orders.map(order => (
+          <div key={order.id} className="bg-white border rounded-lg p-4">
+            <div className="flex justify-between items-start mb-3">
+              <div>
+                <h3 className="font-semibold">Order #{order.id}</h3>
+                <p className="text-sm text-gray-600">
+                  {new Date(order.created_at).toLocaleDateString()}
+                </p>
               </div>
-              
-              {order.items && (
-                <div className="space-y-2">
-                  {order.items.map((item: any, index: number) => (
-                    <div key={index} className="flex items-center text-sm">
-                      <img 
-                        src={item.image ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${item.image}` : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}/uploads/placeholder.png`} 
-                        alt={item.name}
-                        className="w-8 h-8 object-cover rounded mr-3"
-                      />
-                      <span className="flex-1">{item.name}</span>
-                      <span className="text-gray-600">x{item.quantity}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(order.status)}`}>
+                {order.status.toUpperCase()}
+              </span>
             </div>
-          ))}
-        </div>
+            
+            <div className="mb-3">
+              <h4 className="font-medium mb-2">Items:</h4>
+              <div className="space-y-1">
+                {order.items.map((item, index) => (
+                  <div key={index} className="flex justify-between text-sm">
+                    <span>{item.name} x{item.quantity}</span>
+                    <span>₹{item.price * item.quantity}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center pt-3 border-t">
+              <div>
+                <p className="text-sm text-gray-600">Delivery Address:</p>
+                <p className="text-sm">{order.delivery_address}</p>
+              </div>
+              <div className="text-right">
+                <p className="font-semibold">Total: ₹{order.total}</p>
+                <p className="text-sm text-gray-600">Cash on Delivery</p>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
-}
+};
+
+export default Orders;

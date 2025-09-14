@@ -1,78 +1,113 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { ordersAPI } from '../services/api';
 
-interface OrderItem {
-  id: string;
-  productId: string;
+export interface OrderItem {
+  product_id: string;
   quantity: number;
   price: number;
   name: string;
-  image: string;
 }
 
-interface Order {
+export interface Order {
   id: string;
+  user_id: string;
   items: OrderItem[];
   total: number;
-  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
-  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
-  createdAt: string;
-  deliveryAddress: string;
+  status: 'pending' | 'confirmed' | 'delivered' | 'cancelled';
+  payment_status: 'pending' | 'paid';
+  delivery_address: string;
+  created_at: string;
 }
 
-interface OrdersState {
+interface OrderState {
   orders: Order[];
-  currentOrder: Order | null;
   loading: boolean;
   error: string | null;
 }
 
-const initialState: OrdersState = {
+const initialState: OrderState = {
   orders: [],
-  currentOrder: null,
   loading: false,
   error: null,
 };
 
 export const createOrder = createAsyncThunk(
   'orders/create',
-  async (orderData: { items: OrderItem[]; deliveryAddress: string }) => {
-    const response = await ordersAPI.create(orderData);
-    return response.data;
+  async (orderData: { items: OrderItem[]; total: number; delivery_address: string }) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(orderData),
+    });
+    return response.json();
   }
 );
 
-export const fetchOrders = createAsyncThunk('orders/fetchAll', async () => {
-  const response = await ordersAPI.getAll();
-  return response.data;
-});
+export const fetchUserOrders = createAsyncThunk(
+  'orders/fetchUser',
+  async () => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/orders/user`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.json();
+  }
+);
 
-export const cancelOrder = createAsyncThunk(
-  'orders/cancel',
-  async (orderId: string) => {
-    const response = await api.patch(`/orders/${orderId}/cancel`);
-    return response.data;
+export const fetchAllOrders = createAsyncThunk(
+  'orders/fetchAll',
+  async () => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/orders`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.json();
+  }
+);
+
+export const updateOrderStatus = createAsyncThunk(
+  'orders/updateStatus',
+  async ({ id, status }: { id: string; status: string }) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/orders/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify({ status }),
+    });
+    return response.json();
   }
 );
 
 const ordersSlice = createSlice({
   name: 'orders',
   initialState,
-  reducers: {
-    clearError: (state) => {
-      state.error = null;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(createOrder.fulfilled, (state, action) => {
-        state.orders.unshift(action.payload);
-        state.currentOrder = action.payload;
+      .addCase(createOrder.pending, (state) => {
+        state.loading = true;
       })
-      .addCase(fetchOrders.fulfilled, (state, action) => {
+      .addCase(createOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders.unshift(action.payload);
+      })
+      .addCase(createOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to create order';
+      })
+      .addCase(fetchUserOrders.fulfilled, (state, action) => {
         state.orders = action.payload;
       })
-      .addCase(cancelOrder.fulfilled, (state, action) => {
+      .addCase(fetchAllOrders.fulfilled, (state, action) => {
+        state.orders = action.payload;
+      })
+      .addCase(updateOrderStatus.fulfilled, (state, action) => {
         const index = state.orders.findIndex(order => order.id === action.payload.id);
         if (index !== -1) {
           state.orders[index] = action.payload;
@@ -81,5 +116,4 @@ const ordersSlice = createSlice({
   },
 });
 
-export const { clearError } = ordersSlice.actions;
 export default ordersSlice.reducer;

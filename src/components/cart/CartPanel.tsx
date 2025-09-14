@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { IoClose } from 'react-icons/io5';
 import { FiChevronRight } from 'react-icons/fi';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
@@ -8,6 +9,7 @@ import AddToCartButton from '../shared/AddToCartButton';
 import Misc from '../../lib/data/layout.json';
 import SuggestedItems from './SuggestedItems';
 import { shuffleItems } from '../../utils/helper';
+import CheckoutModal from '../checkout/CheckoutModal';
 
 const CartPanelItem = (props: CartItem) => {
   const { image, title, subTitle, mrp } = props.product;
@@ -16,7 +18,14 @@ const CartPanelItem = (props: CartItem) => {
     <div className="flex p-4 gap-4 border-t _border-muted">
       <div>
         <div className="h-[72px] w-[72px] border rounded-[4px] overflow-hidden">
-          <img src={image ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${image}` : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}/uploads/placeholder.png`} alt="" className="h-full w-full object-cover" />
+          <img 
+            src={image && !image.startsWith('http') ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${image}` : image || `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}/uploads/placeholder.png`} 
+            alt={title} 
+            className="h-full w-full object-cover"
+            onError={(e) => {
+              e.currentTarget.src = `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}/uploads/placeholder.png`;
+            }}
+          />
         </div>
       </div>
       <div className="text-left flex flex-col flex-1">
@@ -57,6 +66,7 @@ const CartPanel = () => {
   const dispatch = useAppDispatch();
   const { totalAmount, totalQuantity, cartItems, billAmount, discount } =
     useAppSelector((state) => state.cart);
+  const [showCheckout, setShowCheckout] = useState(false);
   const productItems: any[] = Misc.filter((item) => item.type === 77).map(
     (el) => el.objects
   );
@@ -90,7 +100,11 @@ const CartPanel = () => {
         {totalQuantity === 0 ? (
           <div className="flex-1 bg-white p-6">
             <div className="flex flex-col gap-3 justify-center items-center text-center">
-              <img src="empty-cart.webp" alt="" className="h-36 w-36" />
+              <div className="h-36 w-36 flex items-center justify-center bg-gray-100 rounded-full">
+                <svg className="h-20 w-20 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h7M9.5 18a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm9 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                </svg>
+              </div>
               <h3 className="font-bold text-lg leading-tight">
                 You don't have any items in your cart
               </h3>
@@ -170,7 +184,10 @@ const CartPanel = () => {
               </div>
             </div>
             <div className="sticky bottom-0 bg-white px-4 pt-2 pb-4 min-h-[68px] _shadow_sticky">
-              <div className="bg-[#0c831f] cursor-pointer text-white flex items-center px-3 py-3 rounded-[4px] font-medium text-[14px]">
+              <button
+                onClick={() => setShowCheckout(true)}
+                className="w-full bg-[#0c831f] cursor-pointer text-white flex items-center px-3 py-3 rounded-[4px] font-medium text-[14px] hover:bg-[#0a6e1a]"
+              >
                 <div className="font-bold">{totalQuantity} Items</div>
                 <div className="font-bold">&nbsp; &middot; &nbsp;</div>
                 <div>
@@ -180,11 +197,16 @@ const CartPanel = () => {
                 <div className="ml-auto flex items-center font-bold">
                   Proceed <FiChevronRight size={18} className="ml-2" />
                 </div>
-              </div>
+              </button>
             </div>
           </>
         )}
       </aside>
+      
+      <CheckoutModal 
+        isOpen={showCheckout} 
+        onClose={() => setShowCheckout(false)} 
+      />
     </div>
   );
 };
