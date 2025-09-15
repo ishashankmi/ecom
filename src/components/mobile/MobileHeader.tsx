@@ -59,7 +59,7 @@ export default function MobileHeader() {
       </div>
       
       {showSearch && (
-        <div className="absolute top-full left-0 right-0 bg-white border-b border-gray-200 p-4 z-50">
+        <div className="md:hidden fixed top-[60px] left-0 right-0 bg-white border-b border-gray-200 p-4 z-50">
           <input
             type="text"
             value={query}

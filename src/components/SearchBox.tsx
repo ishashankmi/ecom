@@ -44,11 +44,11 @@ const SearchBox = () => {
   }, [query]);
 
   return (
-    <div className="relative">
-      <form onSubmit={handleSearch} className="_searchbox">
+    <div className="relative w-full">
+      <form onSubmit={handleSearch} className="_searchbox relative">
         <FiSearch
-          className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-400 cursor-pointer"
-          size={24}
+          className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-400 cursor-pointer z-10"
+          size={20}
           onClick={handleIconClick}
         />
         <input
@@ -56,7 +56,7 @@ const SearchBox = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for products"
-          className="outline-none w-full text-[14px]"
+          className="outline-none w-full text-[14px] bg-transparent"
           onFocus={() => query && setShowResults(true)}
           onBlur={() => setTimeout(() => setShowResults(false), 200)}
         />
