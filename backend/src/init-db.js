@@ -105,6 +105,16 @@ const initDB = async () => {
       ALTER TABLE order_items ADD COLUMN IF NOT EXISTS name VARCHAR(255)
     `);
 
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS addresses (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id),
+        address TEXT NOT NULL,
+        label VARCHAR(50) DEFAULT 'Home',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Add trigger to update modified_at
     await pool.query(`
       CREATE OR REPLACE FUNCTION update_modified_at_column()

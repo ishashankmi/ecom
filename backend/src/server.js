@@ -8,6 +8,7 @@ import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
 import orderRoutes from './routes/orders.js';
 import categoryRoutes from './routes/categories.js';
+import addressRoutes from './routes/addresses.js';
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/addresses', addressRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Saras API is running' });
