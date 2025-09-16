@@ -63,13 +63,23 @@ services:
     container_name: saras-frontend
     environment:
       VITE_API_URL: http://localhost:3002/api
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000" # internal only, no external mapping
     depends_on:
       - seed
     volumes:
       - .:/app
       - /app/node_modules
+
+  nginx:
+    image: nginx:alpine
+    container_name: saras-nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
 
 volumes:
   postgres_data:
