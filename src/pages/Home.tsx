@@ -35,9 +35,7 @@ const Home = () => {
     return <div className="text-center py-8 text-red-500">Error: {error}</div>;
   }
 
-  if (!products.length && !loading) {
-    return <div className="text-center py-8">No products found. Products length: {products.length}</div>;
-  }
+
 
   return (
     <div className="_container overflow-x-hidden p-4">
@@ -46,20 +44,19 @@ const Home = () => {
         selectedCategory={selectedCategory}
       />
       
-
       <h2 className="text-2xl font-bold mb-6 capitalize">
         {selectedCategoryName}
       </h2>
       
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {filteredProducts.map(product => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
-      
-      {filteredProducts.length === 0 && selectedCategory !== 'all' && (
+      {filteredProducts.length > 0 ? (
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {filteredProducts.map(product => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      ) : (
         <div className="text-center py-8 text-gray-500">
-          No products found in "{selectedCategory}" category
+          <p>No products found in "{selectedCategoryName}" category</p>
         </div>
       )}
     </div>
