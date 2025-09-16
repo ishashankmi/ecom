@@ -117,3 +117,21 @@ const ordersSlice = createSlice({
 });
 
 export default ordersSlice.reducer;
+export const { } = ordersSlice.actions;
+
+// Export alias for fetchOrders
+export const fetchOrders = fetchAllOrders;
+
+// Export cancelOrder function
+export const cancelOrder = createAsyncThunk(
+  'orders/cancel',
+  async (orderId: string) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/orders/${orderId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.json();
+  }
+);

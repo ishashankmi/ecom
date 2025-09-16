@@ -73,7 +73,7 @@ const ItemsCarousel = (props: Props) => {
           partialVisible
         >
           {items?.map((item, i) => (
-            <ProductCard key={i} data={item} />
+            <ProductCard key={i} product={item} />
           ))}
         </Carousel>
       </div>

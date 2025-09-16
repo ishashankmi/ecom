@@ -22,17 +22,16 @@ export default function CheckoutForm() {
 
   const onSubmit = async (data: CheckoutData) => {
     const orderItems = cartItems.map(item => ({
-      id: item.product.id,
-      productId: item.product.id,
+      product_id: item.product.id,
       quantity: item.quantity,
       price: item.unitPrice,
       name: item.product.title,
-      image: item.product.image,
     }));
 
     await dispatch(createOrder({
       items: orderItems,
-      deliveryAddress: data.address,
+      total: billAmount,
+      delivery_address: data.address,
     }));
     
     dispatch(clearCart());

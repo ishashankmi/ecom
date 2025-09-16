@@ -41,7 +41,7 @@ const DynamicPricingTest = () => {
           <div>MRP: ₹{testProduct.mrp}</div>
           <div>Discount Tiers:</div>
           <ul className="ml-4">
-            {testProduct.sales_prices.map((tier, index) => (
+            {testProduct.sales_prices?.map((tier, index) => (
               <li key={index}>
                 {tier.qty}+ qty: ₹{tier.discount} discount (₹{testProduct.price - (tier.discount || 0)} each)
               </li>

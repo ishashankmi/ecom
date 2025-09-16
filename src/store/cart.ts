@@ -124,3 +124,24 @@ const cartSlice = createSlice({
 
 export default cartSlice.reducer;
 export const { addItem, removeItem, clearCart } = cartSlice.actions;
+
+// Export refreshCartPricing function
+export const refreshCartPricing = () => (dispatch: any, getState: any) => {
+  const state = getState();
+  const cartItems = state.cart.cartItems;
+  
+  cartItems.forEach((item: any) => {
+    const unitPrice = getDynamicPrice(item.quantity, item.product.price);
+    item.unitPrice = unitPrice;
+    item.billPrice = unitPrice * item.quantity;
+    item.discount = item.totalPrice - item.billPrice;
+  });
+  
+  // Recalculate totals
+  const totalQuantity = cartItems.reduce((total: number, item: any) => total + item.quantity, 0);
+  const totalAmount = cartItems.reduce((total: number, item: any) => total + item.totalPrice, 0);
+  const billAmount = cartItems.reduce((total: number, item: any) => total + item.billPrice, 0);
+  const discount = cartItems.reduce((total: number, item: any) => total + item.discount, 0);
+  
+  return { cartItems, totalQuantity, totalAmount, billAmount, discount };
+};

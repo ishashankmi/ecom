@@ -42,7 +42,7 @@ export default function OrderHistory() {
                 <div>
                   <h3 className="font-semibold">Order #{order.id}</h3>
                   <p className="text-sm text-gray-600">
-                    {format(new Date(order.createdAt), 'MMM dd, yyyy HH:mm')}
+                    {format(new Date(order.created_at), 'MMM dd, yyyy HH:mm')}
                   </p>
                 </div>
                 <div className="text-right">
@@ -56,8 +56,8 @@ export default function OrderHistory() {
               <div className="border-t pt-4">
                 <h4 className="font-medium mb-2">Items:</h4>
                 <div className="space-y-2">
-                  {order.items.map(item => (
-                    <div key={item.id} className="flex justify-between text-sm">
+                  {order.items.map((item, index) => (
+                    <div key={index} className="flex justify-between text-sm">
                       <span>{item.name} x {item.quantity}</span>
                       <span>₹{item.price * item.quantity}</span>
                     </div>
@@ -67,7 +67,7 @@ export default function OrderHistory() {
 
               <div className="border-t pt-4 mt-4">
                 <p className="text-sm text-gray-600">
-                  <strong>Delivery Address:</strong> {order.deliveryAddress}
+                  <strong>Delivery Address:</strong> {order.delivery_address}
                 </p>
               </div>
 

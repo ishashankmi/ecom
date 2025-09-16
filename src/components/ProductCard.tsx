@@ -18,7 +18,7 @@ const ProductCard = ({ product }: { product: any }) => {
   try {
     if (sales_prices && sales_prices.length > 0) {
       const parsed = typeof sales_prices === 'string' ? JSON.parse(sales_prices) : sales_prices;
-      salesPrices = parsed.map(tier => ({ 
+      salesPrices = parsed.map((tier: any) => ({ 
         qty: tier.qty, 
         price: tier.price, 
         discount: tier.discount 
@@ -67,11 +67,11 @@ const ProductCard = ({ product }: { product: any }) => {
         onClick={handleProductClick}
       >
         <img 
-          src={image && !image.startsWith('http') ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${image}` : image || `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}/uploads/placeholder.png`} 
+          src={image && !image.startsWith('http') ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${image}` : image || '/empty-cart.webp'} 
           alt={name} 
           className="h-full w-full p-2 object-contain"
           onError={(e) => {
-            e.currentTarget.src = `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}/uploads/placeholder.png`;
+            e.currentTarget.src = '/empty-cart.webp';
           }}
         />
       </div>

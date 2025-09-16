@@ -43,7 +43,7 @@ const initialState: ProductsState = {
 export const fetchProducts = createAsyncThunk('products/fetchAll', async () => {
   const response = await productsAPI.getAll();
   console.log('Products API response:', response.data);
-  const transformedProducts = response.data.map(product => ({
+  const transformedProducts = response.data.map((product: any) => ({
     ...product,
     sales_prices: product.sales_prices ? 
       (typeof product.sales_prices === 'string' ? JSON.parse(product.sales_prices) : product.sales_prices) : 
@@ -61,7 +61,7 @@ export const fetchProductsByCategory = createAsyncThunk(
     } else {
       response = await productsAPI.getByCategoryId(categoryId);
     }
-    const transformedProducts = response.data.map(product => ({
+    const transformedProducts = response.data.map((product: any) => ({
       ...product,
       sales_prices: product.sales_prices ? 
         (typeof product.sales_prices === 'string' ? JSON.parse(product.sales_prices) : product.sales_prices) : 

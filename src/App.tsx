@@ -25,21 +25,22 @@ function App() {
     return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
 
-  if (!token || !user) {
-    return (
-      <BrowserRouter>
-        <LoginLayout component={<Login />} />
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          closeOnClick
-          draggable
-          pauseOnHover
-        />
-      </BrowserRouter>
-    );
-  }
+  // Allow access to all pages without authentication for now
+  // if (!token || !user) {
+  //   return (
+  //     <BrowserRouter>
+  //       <LoginLayout component={<Login />} />
+  //       <ToastContainer
+  //         position="top-right"
+  //         autoClose={3000}
+  //         hideProgressBar={false}
+  //         closeOnClick
+  //         draggable
+  //         pauseOnHover
+  //       />
+  //     </BrowserRouter>
+  //   );
+  // }
 
   return (
     <BrowserRouter>
