@@ -75,7 +75,11 @@ const SearchBox = () => {
               }}
             >
               <div className="flex items-center gap-3">
-                <img src={product.image} alt={product.name} className="w-10 h-10 object-contain" />
+                <img 
+                  src={(import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3002') + (product.image || '/uploads/placeholder.png')}
+                  alt={product.name} 
+                  className="w-10 h-10 object-contain bg-gray-100 rounded"
+                />
                 <div>
                   <div className="font-medium text-sm">{product.name}</div>
                   <div className="text-xs text-gray-500">₹{product.price}</div>

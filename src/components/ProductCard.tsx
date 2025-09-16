@@ -67,7 +67,7 @@ const ProductCard = ({ product }: { product: any }) => {
         onClick={handleProductClick}
       >
         <img 
-          src={image && !image.startsWith('http') ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${image}` : image || '/empty-cart.webp'} 
+          src={image && !image.startsWith('http') ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3002'}${image}` : image || '/empty-cart.webp'} 
           alt={name} 
           className="h-full w-full p-2 object-contain"
           onError={(e) => {
