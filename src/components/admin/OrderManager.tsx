@@ -31,10 +31,10 @@ const OrderManager = () => {
     }
   };
 
-  const filteredOrders = orders.filter(order => 
+  const filteredOrders = Array.isArray(orders) ? orders.filter(order => 
     order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
     order.delivery_address.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ) : [];
 
   if (loading) {
     return <div className="text-center py-8">Loading orders...</div>;

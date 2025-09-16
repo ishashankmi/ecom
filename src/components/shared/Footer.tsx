@@ -104,7 +104,7 @@ const Footer = () => {
     <footer>
       <div className="_container space-y-6">
         <div className="flex flex-col md:flex-row gap-4 pb-2">
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <h4 className="font-bold my-4 text-lg leading-none lg:mr-4">
               Categories
             </h4>
@@ -118,7 +118,7 @@ const Footer = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
           <div className="flex-1">
             <h4 className="font-bold my-4 text-lg leading-none lg:mr-4">
               Useful Links

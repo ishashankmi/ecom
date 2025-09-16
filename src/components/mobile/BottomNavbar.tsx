@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FiHome, FiSearch, FiShoppingCart, FiUser, FiList } from 'react-icons/fi';
+import { FiHome, FiSearch, FiShoppingCart, FiUser, FiList, FiPackage } from 'react-icons/fi';
 import { useAppSelector } from '../../hooks';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { logoutAsync } from '../../store/auth';
@@ -22,7 +22,9 @@ export default function BottomNavbar() {
   const navItems = [
     { path: '/', icon: FiHome, label: 'Home' },
     { path: '/cart', icon: FiShoppingCart, label: 'Cart', badge: totalItems },
-    { path: '/orders', icon: FiList, label: 'Orders' },
+    user?.role === 'admin' 
+      ? { path: '/admin', icon: FiPackage, label: 'Products' }
+      : { path: '/orders', icon: FiList, label: 'Orders' },
   ];
 
   return (
