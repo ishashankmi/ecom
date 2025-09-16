@@ -36,8 +36,8 @@ export default function MobileHeader() {
       <div className="md:hidden fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between z-50">
         <div className="flex items-center gap-4">
           <Link to="/">
-            <span className="font-black text-xl text-yellow-400 tracking-tight">
-              Sar<strong className="text-green-600">as</strong>
+            <span className="font-black text-xl text-yellow-400 tracking-tight" style={{color: '#0041c2'}}>
+              Saras
             </span>
           </Link>
           <LocationPicker />

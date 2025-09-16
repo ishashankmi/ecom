@@ -120,7 +120,7 @@ export default function CheckoutForm() {
               <textarea
                 {...register('address')}
                 rows={3}
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="Enter your complete address"
               />
               {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
@@ -138,7 +138,7 @@ export default function CheckoutForm() {
 
         <button
           type="submit"
-          className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition-colors"
+          className="w-full bg-primary text-white p-3 rounded-lg hover:bg-primary-dark transition-colors"
         >
           Place Order
         </button>

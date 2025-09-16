@@ -10,7 +10,7 @@ export default {
     },
     extend: {
       colors: {
-        primary: '#0041C2',
+        primary: '#0041c2',
         'primary-dark': '#003399',
         'primary-light': '#1a5ce6',
       },
