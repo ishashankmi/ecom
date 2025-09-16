@@ -21,7 +21,6 @@ export default function BottomNavbar() {
 
   const navItems = [
     { path: '/', icon: FiHome, label: 'Home' },
-    { path: '/search', icon: FiSearch, label: 'Search' },
     { path: '/cart', icon: FiShoppingCart, label: 'Cart', badge: totalItems },
     { path: '/orders', icon: FiList, label: 'Orders' },
   ];
@@ -33,10 +32,10 @@ export default function BottomNavbar() {
           <Link
             key={path}
             to={path}
-            className={`flex flex-col items-center py-2 px-3 relative ${
+            className={`flex flex-col items-center py-2 px-3 relative rounded-lg transition-all duration-200 ${
               location.pathname === path
                 ? 'text-primary'
-                : 'text-gray-500 hover:text-primary'
+                : 'text-gray-500 hover:text-primary hover:shadow-md'
             }`}
           >
             <div className="relative">
@@ -52,7 +51,7 @@ export default function BottomNavbar() {
         ))}
         <button
           onClick={handleUserAction}
-          className="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-primary"
+          className="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-primary rounded-lg transition-all duration-200 hover:shadow-md"
         >
           <FiUser size={20} />
           <span className="text-xs mt-1">{user ? 'Profile' : 'Login'}</span>
