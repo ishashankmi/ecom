@@ -177,8 +177,8 @@ const ProductView = () => {
             
             <div className="border-t pt-6">
               <div className="flex items-center gap-4">
-                <div className="w-32">
-                  <AddToCartButton product={cartProduct} />
+                <div className="w-40 md:w-32 h-12 md:h-10">
+                  <AddToCartButton product={cartProduct} size="lg" />
                 </div>
                 <div className="text-sm _text-muted">
                   <p>Free delivery on orders above ₹199</p>

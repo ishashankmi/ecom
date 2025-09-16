@@ -33,20 +33,15 @@ const Header = () => {
         <div className="w-full sm:w-[240px] xl:w-[320px] py-4 px-1 sm:p-0 _header_loc flex items-center sm:justify-center cursor-pointer sm:hover:bg-gray-50">
           <LocationPicker />
         </div>
-        <div className="flex-1 _header_search">
+        <div className="flex-1 _header_search px-4">
           <SearchBox />
         </div>
         {user?.role === 'admin' && (
-          <Link to="/admin" className="flex items-center justify-center cursor-pointer sm:hover:bg-gray-50 max-w-[80px] lg:max-w-[120px] w-full">
+          <Link to="/admin" className="flex items-center justify-center cursor-pointer sm:hover:bg-gray-50 w-20 lg:w-24" data-testid="admin-link-header">
             <span className="font-medium _text-default text-sm">Admin</span>
           </Link>
         )}
-        {user?.role === 'admin' && (
-          <Link to="/admin" className="flex items-center justify-center cursor-pointer sm:hover:bg-gray-50 max-w-[80px] lg:max-w-[120px] w-full">
-            <span className="font-medium _text-default text-sm">Admin</span>
-          </Link>
-        )}
-        <div onClick={handleAuthClick} className="flex items-center _header_login justify-center cursor-pointer sm:hover:bg-gray-50 max-w-[80px] lg:max-w-[160px] w-full ">
+        <div onClick={handleAuthClick} className="flex items-center _header_login justify-center cursor-pointer sm:hover:bg-gray-50 w-20 lg:w-32">
           <span className="font-medium _text-default hidden sm:block">
             {user ? user.name : 'Login'}
           </span>

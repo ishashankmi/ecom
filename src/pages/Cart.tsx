@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../hooks';
 import { addItem, removeItem } from '../store/cart';
 import { FiPlus, FiMinus, FiTrash2 } from 'react-icons/fi';
+import DynamicPricingPopup from '../components/DynamicPricingPopup';
 
 export default function Cart() {
   const dispatch = useAppDispatch();
@@ -62,12 +63,6 @@ export default function Cart() {
                   )}
                 </div>
                 <p className="text-sm text-gray-600">Total: ₹{item.billPrice}</p>
-                {/* Dynamic Pricing for Mobile */}
-                <div className="md:hidden mt-1">
-                  <div className="text-xs" style={{color: '#0041C2'}}>
-                    ₹{Math.round(item.product.price * 0.9)} on 2+ • ₹{Math.round(item.product.price * 0.8)} on 5+
-                  </div>
-                </div>
               </div>
               
               <div className="flex items-center space-x-3">
@@ -86,13 +81,45 @@ export default function Cart() {
                 >
                   <FiPlus size={16} />
                 </button>
+                
+                <button
+                  onClick={() => {
+                    // Remove all quantities of this item
+                    for (let i = 0; i < item.quantity; i++) {
+                      dispatch(removeItem(item.product.id));
+                    }
+                  }}
+                  className="p-2 text-red-600 hover:bg-red-50 rounded"
+                  title="Remove from cart"
+                >
+                  <FiTrash2 size={16} />
+                </button>
               </div>
             </div>
           ))}
         </div>
 
         <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
-          <div className="space-y-2 mb-4">
+          <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
+          <div className="space-y-3 mb-4">
+            {cartItems.map(item => (
+              <div key={item.product.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                <div className="flex-1">
+                  <div className="font-medium">{item.product.title}</div>
+                  <div className="text-sm text-gray-600">Qty: {item.quantity} × ₹{item.unitPrice}</div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <DynamicPricingPopup product={{
+                    id: item.product.id,
+                    title: item.product.title,
+                    price: item.product.price
+                  }} />
+                  <span className="font-semibold">₹{item.billPrice}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="space-y-2 mb-4 border-t pt-4">
             <div className="flex justify-between">
               <span>Subtotal ({totalQuantity} items)</span>
               <span>₹{totalAmount}</span>

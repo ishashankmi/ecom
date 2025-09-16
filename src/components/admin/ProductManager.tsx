@@ -11,15 +11,15 @@ import MultiImageUpload from './MultiImageUpload';
 const productSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   brand: z.string().optional(),
-  price: z.number().min(0, 'Price must be positive'),
-  mrp: z.number().min(0, 'MRP must be positive'),
+  price: z.string().min(1, 'Price is required').transform(val => parseFloat(val) || 0),
+  mrp: z.string().min(1, 'MRP is required').transform(val => parseFloat(val) || 0),
   category: z.string().min(1, 'Category is required'),
   batch_no: z.string().optional(),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   weight: z.string().optional(),
   sku: z.string().optional(),
   hsn: z.string().optional(),
-  stock: z.number().min(0, 'Stock must be positive'),
+  stock: z.string().min(1, 'Stock is required').transform(val => parseInt(val) || 0),
 });
 
 type ProductData = z.infer<typeof productSchema>;
@@ -162,8 +162,8 @@ export default function ProductManager() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <input
-                  {...register('price', { valueAsNumber: true })}
-                  type="number"
+                  {...register('price')}
+                  type="text"
                   placeholder="Price"
                   className="w-full p-3 border rounded-lg"
                 />
@@ -171,12 +171,12 @@ export default function ProductManager() {
               </div>
               <div>
                 <input
-                  {...register('mrp', { valueAsNumber: true })}
-                  type="number"
+                  {...register('mrp')}
+                  type="text"
                   placeholder="MRP"
                   className="w-full p-3 border rounded-lg"
                 />
-                {errors.mrp && <p className="text-red-500 text-sm">{errors.mrp.message}</p>}
+                {errors.mrp && <p className="text red-500 text-sm">{errors.mrp.message}</p>}
               </div>
             </div>
 
@@ -231,8 +231,8 @@ export default function ProductManager() {
 
             <div>
               <input
-                {...register('stock', { valueAsNumber: true })}
-                type="number"
+                {...register('stock')}
+                type="text"
                 placeholder="Stock Quantity"
                 className="w-full p-3 border rounded-lg"
               />
