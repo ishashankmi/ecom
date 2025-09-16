@@ -39,3 +39,9 @@ export const categoriesAPI = {
   getAll: () => api.get('/categories'),
   create: (category: any) => api.post('/categories', category),
 };
+
+export const addressesAPI = {
+  getAll: () => api.get('/addresses'),
+  create: (address: { address: string; label: string; area?: string }) => api.post('/addresses', address),
+  delete: (id: string) => api.delete(`/addresses/${id}`),
+};

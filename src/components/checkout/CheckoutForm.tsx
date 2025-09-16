@@ -7,7 +7,6 @@ import { clearCart } from '../../store/cart';
 
 const checkoutSchema = z.object({
   address: z.string().min(10, 'Address must be at least 10 characters'),
-  paymentMethod: z.enum(['upi', 'card', 'netbanking', 'wallet']),
 });
 
 type CheckoutData = z.infer<typeof checkoutSchema>;
@@ -53,28 +52,7 @@ export default function CheckoutForm() {
           {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-2">Payment Method</label>
-          <div className="space-y-2">
-            {[
-              { value: 'upi', label: 'UPI' },
-              { value: 'card', label: 'Credit/Debit Card' },
-              { value: 'netbanking', label: 'Net Banking' },
-              { value: 'wallet', label: 'Digital Wallet' },
-            ].map(method => (
-              <label key={method.value} className="flex items-center">
-                <input
-                  {...register('paymentMethod')}
-                  type="radio"
-                  value={method.value}
-                  className="mr-2"
-                />
-                {method.label}
-              </label>
-            ))}
-          </div>
-          {errors.paymentMethod && <p className="text-red-500 text-sm mt-1">{errors.paymentMethod.message}</p>}
-        </div>
+
 
         <div className="border-t pt-4">
           <div className="flex justify-between text-lg font-bold">

@@ -25,6 +25,8 @@ const Home = () => {
   const { categories } = useAppSelector(state => state.categories);
   const selectedCategoryName = selectedCategory === 'all' ? 'All' : categories.find(cat => cat.id.toString() === selectedCategory)?.name || 'Unknown';
 
+  console.log('Products:', products, 'Loading:', loading, 'Error:', error);
+
   if (initialLoad && loading) {
     return <div className="text-center py-8">Loading products...</div>;
   }
@@ -34,7 +36,7 @@ const Home = () => {
   }
 
   if (!products.length && !loading) {
-    return <div className="text-center py-8">No products found</div>;
+    return <div className="text-center py-8">No products found. Products length: {products.length}</div>;
   }
 
   return (

@@ -15,12 +15,12 @@ export const getUserAddresses = async (req, res) => {
 
 export const createAddress = async (req, res) => {
   try {
-    const { address, label } = req.body;
+    const { address, label, area } = req.body;
     const userId = req.user.id;
 
     const result = await pool.query(
-      'INSERT INTO addresses (user_id, address, label) VALUES ($1, $2, $3) RETURNING *',
-      [userId, address, label || 'Home']
+      'INSERT INTO addresses (user_id, address, label, area) VALUES ($1, $2, $3, $4) RETURNING *',
+      [userId, address, label || 'Home', area]
     );
 
     res.status(201).json(result.rows[0]);

@@ -7,7 +7,7 @@ export default function Cart() {
   const dispatch = useAppDispatch();
   const { cartItems, totalQuantity, billAmount, totalAmount, discount } = useAppSelector(state => state.cart);
   
-  console.log('Cart items:', cartItems);
+  // console.log('Cart items:', cartItems);
 
   if (cartItems.length === 0) {
     return (
@@ -37,7 +37,7 @@ export default function Cart() {
                 alt={item.product.title}
                 className="w-16 h-16 object-cover rounded-lg mr-4 bg-gray-100"
                 onError={(e) => {
-                  console.log('Image failed to load:', e.currentTarget.src);
+                  // console.log('Image failed to load:', e.currentTarget.src);
                   e.currentTarget.src = '/empty-cart.webp';
                 }}
               />

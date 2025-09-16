@@ -111,8 +111,14 @@ const initDB = async () => {
         user_id INTEGER REFERENCES users(id),
         address TEXT NOT NULL,
         label VARCHAR(50) DEFAULT 'Home',
+        area VARCHAR(255),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
+    `);
+    
+    // Add area column if it doesn't exist
+    await pool.query(`
+      ALTER TABLE addresses ADD COLUMN IF NOT EXISTS area VARCHAR(255)
     `);
 
     // Add trigger to update modified_at

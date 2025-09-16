@@ -8,7 +8,7 @@ const ProductCard = ({ product }: { product: any }) => {
   
   if (!product) return null;
   
-  console.log('ProductCard received product:', JSON.stringify(product, null, 2));
+  // console.log('ProductCard received product:', JSON.stringify(product, null, 2));
   const { id, name, price, mrp, image, description, category, sales_prices } = product;
 
   const numPrice = parseFloat(price);
@@ -49,9 +49,9 @@ const ProductCard = ({ product }: { product: any }) => {
     sales_prices: salesPrices,
   };
   
-  console.log('CartProduct with sales_prices:', JSON.stringify(cartProduct, null, 2));
+  // console.log('CartProduct with sales_prices:', JSON.stringify(cartProduct, null, 2));
   
-  console.log('ProductCard creating cartProduct:', JSON.stringify(cartProduct, null, 2));
+  // console.log('ProductCard creating cartProduct:', JSON.stringify(cartProduct, null, 2));
 
   const handleProductClick = () => {
     const pname = convertTextToURLSlug(name);

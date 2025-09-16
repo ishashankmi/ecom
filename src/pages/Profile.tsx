@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../hooks';
-import { authAPI, ordersAPI } from '../services/api';
+import { authAPI, ordersAPI, addressesAPI } from '../services/api';
 import { logoutAsync } from '../store/auth';
 
 const Profile = () => {
@@ -10,7 +10,10 @@ const Profile = () => {
   const { user } = useAppSelector(state => state.auth);
   const [activeTab, setActiveTab] = useState('profile');
   const [orders, setOrders] = useState<any[]>([]);
+  const [addresses, setAddresses] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<any>(null);
+  const [newAddress, setNewAddress] = useState({ label: '', address: '', area: '' });
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -20,8 +23,45 @@ const Profile = () => {
   useEffect(() => {
     if (activeTab === 'orders') {
       fetchOrders();
+    } else if (activeTab === 'addresses') {
+      fetchAddresses();
     }
   }, [activeTab]);
+
+  const fetchAddresses = async () => {
+    setLoading(true);
+    try {
+      const response = await addressesAPI.getAll();
+      setAddresses(response.data);
+    } catch (error) {
+      console.error('Error fetching addresses:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddAddress = async () => {
+    try {
+      const response = await addressesAPI.create({
+        address: newAddress.address,
+        label: newAddress.label,
+        area: newAddress.area
+      });
+      setAddresses([...addresses, response.data]);
+      setNewAddress({ label: '', address: '', area: '' });
+    } catch (error) {
+      console.error('Error adding address:', error);
+    }
+  };
+
+  const handleDeleteAddress = async (id: string) => {
+    try {
+      await addressesAPI.delete(id);
+      setAddresses(addresses.filter(addr => addr.id !== id));
+    } catch (error) {
+      console.error('Error deleting address:', error);
+    }
+  };
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -79,6 +119,14 @@ const Profile = () => {
               }`}
             >
               Orders
+            </button>
+            <button
+              onClick={() => setActiveTab('addresses')}
+              className={`px-6 py-4 font-medium ${
+                activeTab === 'addresses' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'
+              }`}
+            >
+              Saved Addresses
             </button>
           </div>
         </div>
@@ -167,6 +215,106 @@ const Profile = () => {
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {activeTab === 'addresses' && (
+            <div>
+              <h2 className="text-2xl font-bold mb-6">Saved Addresses</h2>
+              
+              <div className="mb-6 p-4 border rounded-lg">
+                <h3 className="font-semibold mb-4">{editingAddress ? 'Edit Address' : 'Add New Address'}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <input
+                    type="text"
+                    placeholder="Label (Home, Office, etc.)"
+                    value={editingAddress ? editingAddress.label : newAddress.label}
+                    onChange={(e) => editingAddress ? 
+                      setEditingAddress({...editingAddress, label: e.target.value}) :
+                      setNewAddress({...newAddress, label: e.target.value})
+                    }
+                    className="p-3 border rounded-lg"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Area/Locality"
+                    value={editingAddress ? editingAddress.area : newAddress.area}
+                    onChange={(e) => editingAddress ? 
+                      setEditingAddress({...editingAddress, area: e.target.value}) :
+                      setNewAddress({...newAddress, area: e.target.value})
+                    }
+                    className="p-3 border rounded-lg"
+                  />
+
+                  <textarea
+                    placeholder="Full Address"
+                    rows={3}
+                    value={editingAddress ? editingAddress.address : newAddress.address}
+                    onChange={(e) => editingAddress ? 
+                      setEditingAddress({...editingAddress, address: e.target.value}) :
+                      setNewAddress({...newAddress, address: e.target.value})
+                    }
+                    className="p-3 border rounded-lg"
+                  />
+                </div>
+                <div className="flex gap-2 mt-4">
+                  <button
+                    onClick={() => {
+                      if (editingAddress) {
+                        setAddresses(addresses.map(addr => 
+                          addr.id === editingAddress.id ? editingAddress : addr
+                        ));
+                        setEditingAddress(null);
+                      } else {
+                        handleAddAddress();
+                      }
+                    }}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                  >
+                    {editingAddress ? 'Update' : 'Add'} Address
+                  </button>
+                  {editingAddress && (
+                    <button
+                      onClick={() => setEditingAddress(null)}
+                      className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {addresses.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">No saved addresses</div>
+                ) : (
+                  addresses.map((address) => (
+                    <div key={address.id} className="border rounded-lg p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-semibold">{address.label}</h3>
+                          <p className="text-gray-600">{address.address}</p>
+                          <p className="text-sm text-gray-500">{address.area}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => setEditingAddress(address)}
+                            className="text-blue-600 hover:underline text-sm"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteAddress(address.id)}
+                            className="text-red-600 hover:underline text-sm"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           )}
         </div>
