@@ -118,3 +118,33 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, name, email, phone, role, created_at FROM users ORDER BY created_at DESC'
+    );
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Get all users error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const result = await pool.query('DELETE FROM users WHERE id = $1 AND role != $2 RETURNING *', [id, 'admin']);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found or cannot delete admin user' });
+    }
+    
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

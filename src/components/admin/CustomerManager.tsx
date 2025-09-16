@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { authAPI } from '../../services/api';
+import { toast } from 'react-toastify';
 
 const CustomerManager = () => {
   const [customers, setCustomers] = useState<any[]>([]);
@@ -22,6 +23,19 @@ const CustomerManager = () => {
     fetchCustomers();
   }, []);
 
+  const handleDeleteUser = async (userId: string, userName: string) => {
+    if (window.confirm(`Are you sure you want to delete user "${userName}"? This action cannot be undone.`)) {
+      try {
+        await authAPI.deleteUser(userId);
+        setCustomers(customers.filter(customer => customer.id !== userId));
+        toast.success('User deleted successfully!');
+      } catch (error) {
+        console.error('Failed to delete user:', error);
+        toast.error('Failed to delete user');
+      }
+    }
+  };
+
   const filteredCustomers = customers.filter(customer =>
     customer.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -34,14 +48,14 @@ const CustomerManager = () => {
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Customer Management</h2>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold">Customer Management</h2>
         <input
           type="text"
           placeholder="Search customers..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-3 py-2 border rounded-lg w-64"
+          className="px-3 py-2 border rounded-lg w-full sm:w-64"
         />
       </div>
 
@@ -66,6 +80,9 @@ const CustomerManager = () => {
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Joined
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -94,6 +111,16 @@ const CustomerManager = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {customer.created_at ? new Date(customer.created_at).toLocaleDateString() : 'N/A'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    {customer.role !== 'admin' && (
+                      <button
+                        onClick={() => handleDeleteUser(customer.id, customer.name)}
+                        className="text-red-600 hover:text-red-900 font-medium"
+                      >
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

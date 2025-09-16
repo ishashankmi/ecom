@@ -15,6 +15,8 @@ export const authAPI = {
     api.put('/auth/profile', userData),
   
   getAllUsers: () => api.get('/auth/users'),
+  
+  deleteUser: (id: string) => api.delete(`/auth/users/${id}`),
 };
 
 export const productsAPI = {
