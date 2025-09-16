@@ -2,13 +2,10 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:15-alpine
+    build:
+      context: ./postgres
     container_name: saras-postgres
     restart: unless-stopped
-    environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
     ports:
       - "5432:5432"
     volumes:
