@@ -36,6 +36,11 @@ const Header = () => {
         <div className="flex-1 _header_search">
           <SearchBox />
         </div>
+        {user?.role === 'admin' && (
+          <Link to="/admin" className="flex items-center justify-center cursor-pointer sm:hover:bg-gray-50 max-w-[80px] lg:max-w-[120px] w-full">
+            <span className="font-medium _text-default text-sm">Admin</span>
+          </Link>
+        )}
         <div onClick={handleAuthClick} className="flex items-center _header_login justify-center cursor-pointer sm:hover:bg-gray-50 max-w-[80px] lg:max-w-[160px] w-full ">
           <span className="font-medium _text-default hidden sm:block">
             {user ? user.name : 'Login'}

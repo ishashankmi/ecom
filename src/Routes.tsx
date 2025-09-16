@@ -22,9 +22,14 @@ const AppWithRouting = () => {
         element={<Layout component={<ProductView />} />}
       />
       <Route path="/cart" element={<Layout component={<Cart />} />} />
-      <Route path="/orders" element={<Layout component={<Orders />} />} />
+      <Route path="/orders" element={
+        <ProtectedRoute>
+          <Layout component={<Orders />} />
+        </ProtectedRoute>
+      } />
       <Route path="/profile" element={<Layout component={<Profile />} />} />
       <Route path="/checkout" element={<Layout component={<Checkout />} />} />
+      <Route path="/login" element={<LoginLayout component={<Login />} />} />
       <Route path="/admin" element={
         <ProtectedRoute adminOnly>
           <AdminDashboard />

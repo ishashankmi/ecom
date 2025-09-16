@@ -121,6 +121,8 @@ const authSlice = createSlice({
         state.user = null;
         state.token = null;
         cookieUtils.clearAll();
+        // Clear cart from localStorage when token is expired
+        localStorage.removeItem('cart');
       })
       .addCase(logoutAsync.fulfilled, (state) => {
         state.user = null;

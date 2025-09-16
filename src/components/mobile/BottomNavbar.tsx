@@ -8,7 +8,7 @@ export default function BottomNavbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { totalQuantity } = useAppSelector(state => state.cart);
+  const { totalItems } = useAppSelector(state => state.cart);
   const { user } = useAppSelector(state => state.auth);
 
   const handleUserAction = () => {
@@ -22,7 +22,7 @@ export default function BottomNavbar() {
   const navItems = [
     { path: '/', icon: FiHome, label: 'Home' },
     { path: '/search', icon: FiSearch, label: 'Search' },
-    { path: '/cart', icon: FiShoppingCart, label: 'Cart', badge: totalQuantity },
+    { path: '/cart', icon: FiShoppingCart, label: 'Cart', badge: totalItems },
     { path: '/orders', icon: FiList, label: 'Orders' },
   ];
 
@@ -41,13 +41,13 @@ export default function BottomNavbar() {
           >
             <div className="relative">
               <Icon size={20} />
-              {badge && badge > 0 && (
+              {badge > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
                   {badge > 99 ? '99+' : badge}
                 </span>
               )}
             </div>
-            <span className="text-xs mt-1">{label}</span>
+            <span className="text-xs mt-1 truncate">{label}</span>
           </Link>
         ))}
         <button
