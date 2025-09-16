@@ -217,7 +217,7 @@ export const searchProducts = async (req, res) => {
     const { q } = req.query;
     const result = await pool.query(
       'SELECT * FROM products WHERE name ILIKE $1 OR description ILIKE $1 ORDER BY name',
-      [`%${q}%`]
+      [`${q}%`]
     );
     res.json(result.rows);
   } catch (error) {
