@@ -13,6 +13,8 @@ export const authAPI = {
   
   updateProfile: (userData: { name: string; email: string; phone: string }) =>
     api.put('/auth/profile', userData),
+  
+  getAllUsers: () => api.get('/auth/users'),
 };
 
 export const productsAPI = {

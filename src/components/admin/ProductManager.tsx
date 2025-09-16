@@ -255,10 +255,10 @@ export default function ProductManager() {
               </label>
               <div className="space-y-2">
                 {pricingTiers.map((tier, index) => (
-                  <div key={`${editingProduct}-${index}`} className="flex gap-2 items-center">
+                  <div key={`${editingProduct}-${index}`} className="flex gap-1 sm:gap-2 items-center">
                     <input
                       type="text"
-                      placeholder="Min Qty"
+                      placeholder="Qty"
                       key={`qty-${editingProduct}-${index}`}
                       defaultValue={tier.qty}
                       onChange={(e) => {
@@ -266,7 +266,7 @@ export default function ProductManager() {
                         newTiers[index].qty = parseInt(e.target.value) || 1;
                         setPricingTiers(newTiers);
                       }}
-                      className="w-24 p-2 border rounded"
+                      className="w-16 sm:w-20 p-1 sm:p-2 border rounded text-sm"
                     />
                     <input
                       type="text"
@@ -278,13 +278,13 @@ export default function ProductManager() {
                         newTiers[index].price = parseFloat(e.target.value) || 0;
                         setPricingTiers(newTiers);
                       }}
-                      className="flex-1 p-2 border rounded"
+                      className="flex-1 p-1 sm:p-2 border rounded text-sm"
                     />
                     {pricingTiers.length > 1 && (
                       <button
                         type="button"
                         onClick={() => setPricingTiers(pricingTiers.filter((_, i) => i !== index))}
-                        className="text-red-600 px-2"
+                        className="text-red-600 px-1 sm:px-2 text-lg"
                       >
                         ×
                       </button>

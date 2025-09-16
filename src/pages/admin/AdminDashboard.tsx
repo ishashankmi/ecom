@@ -4,6 +4,7 @@ import { useAppDispatch } from '../../hooks';
 import { logoutAsync } from '../../store/auth';
 import ProductManager from '../../components/admin/ProductManager';
 import OrderManager from '../../components/admin/OrderManager';
+import CustomerManager from '../../components/admin/CustomerManager';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('products');
@@ -13,6 +14,7 @@ export default function AdminDashboard() {
   const tabs = [
     { id: 'products', label: 'Products', component: ProductManager },
     { id: 'orders', label: 'Orders', component: OrderManager },
+    { id: 'customers', label: 'Customers', component: CustomerManager },
   ];
 
   const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component || ProductManager;

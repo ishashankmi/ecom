@@ -145,16 +145,16 @@ const ProductView = () => {
               </div>
               
               {/* Dynamic Pricing */}
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <h4 className="font-semibold text-green-800 mb-2">Bulk Discounts</h4>
-                <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span>Buy 2+ items:</span>
-                    <span className="font-medium text-green-700">₹{Math.round(product.price * 0.9)} each (₹{Math.round(product.price * 0.1)} off)</span>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 md:p-4">
+                <h4 className="font-semibold text-green-800 mb-2 text-sm md:text-base">Bulk Discounts</h4>
+                <div className="space-y-1 text-xs md:text-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="flex-shrink-0">Buy 2+:</span>
+                    <span className="font-medium text-green-700 text-right">₹{Math.round(product.price * 0.9)} (₹{Math.round(product.price * 0.1)} off)</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Buy 5+ items:</span>
-                    <span className="font-medium text-green-700">₹{Math.round(product.price * 0.8)} each (₹{Math.round(product.price * 0.2)} off)</span>
+                  <div className="flex justify-between items-center">
+                    <span className="flex-shrink-0">Buy 5+:</span>
+                    <span className="font-medium text-green-700 text-right">₹{Math.round(product.price * 0.8)} (₹{Math.round(product.price * 0.2)} off)</span>
                   </div>
                 </div>
               </div>
