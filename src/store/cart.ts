@@ -4,6 +4,7 @@ import { CartItem, CartProduct, PricingTier } from '../utils/types';
 type InitialState = {
   cartItems: CartItem[];
   totalQuantity: number;
+  totalItems: number;
   totalAmount: number;
   billAmount: number;
   discount: number;
@@ -21,6 +22,7 @@ const loadCartFromStorage = (): InitialState => {
   return {
     cartItems: [],
     totalQuantity: 0,
+    totalItems: 0,
     totalAmount: 0,
     billAmount: 0,
     discount: 0
@@ -78,6 +80,7 @@ const cartSlice = createSlice({
       }
       
       state.totalQuantity = state.cartItems.reduce((total, item) => total + item.quantity, 0);
+      state.totalItems = state.cartItems.length;
       state.totalAmount = state.cartItems.reduce((total, item) => total + item.totalPrice, 0);
       state.billAmount = state.cartItems.reduce((total, item) => total + item.billPrice, 0);
       state.discount = state.cartItems.reduce((total, item) => total + item.discount, 0);
@@ -105,6 +108,7 @@ const cartSlice = createSlice({
       }
       
       state.totalQuantity = state.cartItems.reduce((total, item) => total + item.quantity, 0);
+      state.totalItems = state.cartItems.length;
       state.totalAmount = state.cartItems.reduce((total, item) => total + item.totalPrice, 0);
       state.billAmount = state.cartItems.reduce((total, item) => total + item.billPrice, 0);
       state.discount = state.cartItems.reduce((total, item) => total + item.discount, 0);
@@ -113,6 +117,7 @@ const cartSlice = createSlice({
     clearCart: (state) => {
       state.cartItems = [];
       state.totalQuantity = 0;
+      state.totalItems = 0;
       state.totalAmount = 0;
       state.billAmount = 0;
       state.discount = 0;

@@ -77,7 +77,7 @@ const ProductCard = ({ product }: { product: any }) => {
       </div>
       <div className="overflow-hidden text-left flex flex-col flex-1 px-2 pb-2">
         <div 
-          className="_text-default text-[13px] font-medium leading-tight line-clamp-2 mb-0.5 cursor-pointer"
+          className="_text-default text-[13px] font-medium leading-tight line-clamp-2 md:line-clamp-2 truncate md:whitespace-normal mb-0.5 cursor-pointer"
           onClick={handleProductClick}
         >
           {name}

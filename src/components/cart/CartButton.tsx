@@ -4,7 +4,7 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import { showCart } from '../../store/ui';
 
 const CartButton = () => {
-  const { billAmount, totalQuantity } = useAppSelector((state) => state.cart);
+  const { billAmount, totalItems } = useAppSelector((state) => state.cart);
   const dispatch = useAppDispatch();
 
   return (
@@ -14,11 +14,11 @@ const CartButton = () => {
     >
       <FaShoppingCart size={24} className="_wiggle" />
       <div className="flex flex-col font-bold text-[14px] leading-none">
-        {totalQuantity === 0 ? (
+        {totalItems === 0 ? (
           <span className="">My Cart</span>
         ) : (
           <>
-            <span className="tracking-tight">{totalQuantity} items</span>
+            <span className="tracking-tight">{totalItems} items</span>
             <span className="tracking-tight mt-0.5">₹{billAmount}</span>
           </>
         )}
