@@ -144,6 +144,21 @@ const ProductView = () => {
                 )}
               </div>
               
+              {/* Dynamic Pricing */}
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h4 className="font-semibold text-green-800 mb-2">Bulk Discounts</h4>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between">
+                    <span>Buy 2+ items:</span>
+                    <span className="font-medium text-green-700">₹{Math.round(product.price * 0.9)} each (₹{Math.round(product.price * 0.1)} off)</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Buy 5+ items:</span>
+                    <span className="font-medium text-green-700">₹{Math.round(product.price * 0.8)} each (₹{Math.round(product.price * 0.2)} off)</span>
+                  </div>
+                </div>
+              </div>
+              
               <div className="border-t pt-4">
                 <h3 className="font-semibold _text-default mb-2">Product Details</h3>
                 <p className="_text-default text-sm leading-normal">{product.description}</p>

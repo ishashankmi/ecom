@@ -88,6 +88,7 @@ const ProductCard = ({ product }: { product: any }) => {
         >
           {category}
         </div>
+
         <div className="flex items-center justify-between mt-auto gap-2">
           <div 
             className="cursor-pointer"
