@@ -1,8 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaMapMarkerAlt, FaChevronDown } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../hooks';
 import { addressesAPI } from '../services/api';
 
 const LocationPicker = () => {
+  const navigate = useNavigate();
+  const { user } = useAppSelector(state => state.auth);
   const [selectedAddress, setSelectedAddress] = useState<any>(null);
   const [addresses, setAddresses] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -51,8 +55,16 @@ const LocationPicker = () => {
   return (
     <div className="relative" ref={dropdownRef}>
       <div 
-        className="flex items-center gap-2 cursor-pointer p-2 hover:bg-gray-50 rounded-lg"
-        onClick={() => setIsOpen(!isOpen)}
+        className={`flex items-center gap-2 p-2 rounded-lg ${
+          user ? 'cursor-pointer hover:bg-gray-50' : 'cursor-not-allowed opacity-60'
+        }`}
+        onClick={() => {
+          if (!user) {
+            navigate('/login');
+            return;
+          }
+          setIsOpen(!isOpen);
+        }}
       >
         <FaMapMarkerAlt className="text-primary text-lg" />
         <div className="flex flex-col">
@@ -107,7 +119,13 @@ const LocationPicker = () => {
               
               <div className="p-3 border-t border-gray-100">
                 <button 
-                  onClick={() => setShowAddForm(true)}
+                  onClick={() => {
+                    if (!user) {
+                      navigate('/login');
+                      return;
+                    }
+                    setShowAddForm(true);
+                  }}
                   className="w-full text-primary font-medium text-sm py-2 hover:bg-blue-50 rounded"
                 >
                   + Add New Address

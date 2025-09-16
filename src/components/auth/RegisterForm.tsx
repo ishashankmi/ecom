@@ -1,8 +1,8 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { register as registerUser } from '../../store/auth';
+import { useNavigate } from 'react-router-dom';
+import { authAPI } from '../../services/api';
 import { toast } from 'react-toastify';
 
 const registerSchema = z.object({
@@ -15,7 +15,7 @@ const registerSchema = z.object({
 type RegisterData = z.infer<typeof registerSchema>;
 
 export default function RegisterForm() {
-  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterData>({
     resolver: zodResolver(registerSchema),
@@ -23,8 +23,9 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: RegisterData) => {
     try {
-      await dispatch(registerUser(data)).unwrap();
-      toast.success('Registration successful!');
+      await authAPI.register(data);
+      toast.success('Registration successful! Please login.');
+      navigate('/login');
     } catch (error) {
       toast.error('Registration failed');
     }

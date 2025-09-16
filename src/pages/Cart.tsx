@@ -6,15 +6,26 @@ import { FiPlus, FiMinus, FiTrash2 } from 'react-icons/fi';
 export default function Cart() {
   const dispatch = useAppDispatch();
   const { cartItems, totalQuantity, billAmount, totalAmount, discount } = useAppSelector(state => state.cart);
+  const { user } = useAppSelector(state => state.auth);
   
   // console.log('Cart items:', cartItems);
 
   if (cartItems.length === 0) {
     return (
-      <div className="h-full bg-gray-50 flex items-center justify-center">
+      <div className="min-h-[60vh] bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
-          <Link to="/" className="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-dark transition-colors">
+          <img 
+            src="/empty-cart.webp" 
+            alt="Empty cart" 
+            className="w-32 h-32 mx-auto mb-4 opacity-50"
+          />
+          <h2 className="text-xl md:text-2xl font-bold mb-2 text-gray-700">Your cart is empty</h2>
+          <p className="text-gray-500 mb-6">Add some items to get started</p>
+          <Link 
+            to="/" 
+            className="inline-block text-white px-6 py-3 rounded-lg hover:opacity-90 transition-colors font-medium"
+            style={{backgroundColor: '#0041C2'}}
+          >
             Start Shopping
           </Link>
         </div>
@@ -51,6 +62,12 @@ export default function Cart() {
                   )}
                 </div>
                 <p className="text-sm text-gray-600">Total: ₹{item.billPrice}</p>
+                {/* Dynamic Pricing for Mobile */}
+                <div className="md:hidden mt-1">
+                  <div className="text-xs" style={{color: '#0041C2'}}>
+                    ₹{Math.round(item.product.price * 0.9)} on 2+ • ₹{Math.round(item.product.price * 0.8)} on 5+
+                  </div>
+                </div>
               </div>
               
               <div className="flex items-center space-x-3">
@@ -81,7 +98,7 @@ export default function Cart() {
               <span>₹{totalAmount}</span>
             </div>
             {discount > 0 && (
-              <div className="flex justify-between text-green-600">
+              <div className="flex justify-between" style={{color: '#0041C2'}}>
                 <span>Discount</span>
                 <span>-₹{discount}</span>
               </div>
@@ -92,12 +109,23 @@ export default function Cart() {
             </div>
           </div>
           
-          <Link
-            to="/checkout"
-            className="w-full bg-primary text-white py-3 rounded-lg text-center block hover:bg-primary-dark transition-colors"
-          >
-            Proceed to Checkout
-          </Link>
+          {user ? (
+            <Link
+              to="/checkout"
+              className="w-full text-white py-3 rounded-lg text-center block hover:opacity-90 transition-colors font-medium"
+              style={{backgroundColor: '#0041C2'}}
+            >
+              Proceed to Checkout
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className="w-full text-white py-3 rounded-lg text-center block hover:opacity-90 transition-colors font-medium"
+              style={{backgroundColor: '#0041C2'}}
+            >
+              Login to Checkout
+            </Link>
+          )}
         </div>
       </div>
     </div>
