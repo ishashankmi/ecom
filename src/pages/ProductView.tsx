@@ -72,9 +72,9 @@ const ProductView = () => {
   };
 
   const getImageUrl = (imagePath: string) => {
-    if (!imagePath) return `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}/uploads/placeholder.png`;
+    if (!imagePath) return `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3002'}/uploads/placeholder.png`;
     if (imagePath.startsWith('http')) return imagePath;
-    return `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${imagePath}`;
+    return `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3002'}${imagePath}`;
   };
 
   const cartProduct = {

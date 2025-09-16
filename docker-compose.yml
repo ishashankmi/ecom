@@ -40,6 +40,11 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3002/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   seed:
     build:
@@ -81,7 +86,10 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - frontend
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
 

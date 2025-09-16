@@ -90,7 +90,7 @@ export default function ProductManager() {
     // Convert database paths to full URLs for display
     const fullUrlImages = images.map((img: any) => {
       if (img && !img.startsWith('data:') && !img.startsWith('http')) {
-        return `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${img}`;
+        return `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3002'}${img}`;
       }
       return img;
     });

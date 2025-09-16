@@ -19,11 +19,11 @@ const CartPanelItem = (props: CartItem) => {
       <div>
         <div className="h-[72px] w-[72px] border rounded-[4px] overflow-hidden">
           <img 
-            src={image && !image.startsWith('http') ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${image}` : image || `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}/uploads/placeholder.png`} 
+            src={image && !image.startsWith('http') ? `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3002'}${image}` : image || `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3002'}/uploads/placeholder.png`} 
             alt={title} 
             className="h-full w-full object-cover"
             onError={(e) => {
-              e.currentTarget.src = `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}/uploads/placeholder.png`;
+              e.currentTarget.src = `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3002'}/uploads/placeholder.png`;
             }}
           />
         </div>
