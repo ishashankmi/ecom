@@ -16,7 +16,7 @@ const AppWithRouting = () => {
   return (
     <Routes>
       <Route path="/" element={<Layout component={<Home />} />} />
-      <Route path="/search" element={<Layout component={<Search />} />} />
+
       <Route
         path="/prn/:name/prid/:id"
         element={<Layout component={<ProductView />} />}
