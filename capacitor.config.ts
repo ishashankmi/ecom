@@ -5,7 +5,11 @@ const config: CapacitorConfig = {
   appName: 'Saras',
   webDir: 'dist',
   server: {
-    androidScheme: 'https'
+    url: 'http://13.203.208.251',
+    cleartext: true
+  },
+  android: {
+    allowMixedContent: true
   }
 };
 
