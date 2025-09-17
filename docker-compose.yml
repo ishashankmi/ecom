@@ -71,7 +71,7 @@ services:
     container_name: saras-frontend
     restart: unless-stopped
     environment:
-      VITE_API_URL: /api
+      VITE_API_URL: http://3.7.159.208/api
     ports:
       - "3000:3000"
     depends_on:

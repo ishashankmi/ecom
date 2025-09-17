@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Saras',
   webDir: 'dist',
   server: {
-    url: 'http://13.203.208.251',
+    url: 'http://3.7.159.208',
     cleartext: true
   },
   android: {
