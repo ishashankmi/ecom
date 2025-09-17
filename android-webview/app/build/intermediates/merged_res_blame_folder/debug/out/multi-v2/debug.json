@@ -1,0 +1,38 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.saras.webview.app-merged_res-4:/values_values.arsc.flat",
+            "map": [
+                {
+                    "source": "/home/shashankmiyan/Videos/loggers/android-webview/app/src/main/res/values/strings.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "42",
+                        "endOffsets": "93"
+                    }
+                },
+                {
+                    "source": "/home/shashankmiyan/Videos/loggers/android-webview/app/src/main/res/values/styles.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "5",
+                        "endColumns": "12",
+                        "endOffsets": "275"
+                    },
+                    "to": {
+                        "startLines": "3",
+                        "startColumns": "4",
+                        "startOffsets": "98",
+                        "endLines": "6",
+                        "endColumns": "12",
+                        "endOffsets": "318"
+                    }
+                }
+            ]
+        }
+    ]
+}

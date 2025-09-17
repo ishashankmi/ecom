@@ -1,0 +1,5 @@
+com.saras.webview:string/app_name = 0x7f040000
+com.saras.webview:mipmap/ic_launcher = 0x7f030000
+com.saras.webview:style/AppTheme = 0x7f050000
+com.saras.webview:layout/activity_main = 0x7f020000
+com.saras.webview:id/webview = 0x7f010000
