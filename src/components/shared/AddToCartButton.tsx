@@ -58,7 +58,7 @@ const AddToCartButton = ({ product, size }: ButtonProps) => {
           >
             <IoRemoveSharp size={18} className="text-white" />
           </button>
-          <span className="flex items-center justify-center text-white">
+          <span className="flex items-center justify-center text-white min-w-0">
             {itemCount}
           </span>
           <button

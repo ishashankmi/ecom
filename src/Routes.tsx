@@ -15,21 +15,40 @@ import ProductView from './pages/ProductView';
 const AppWithRouting = () => {
   return (
     <Routes>
-      <Route path="/" element={<Layout component={<Home />} />} />
-
+      <Route path="/login" element={<LoginLayout component={<Login />} />} />
+      <Route path="/" element={
+        <ProtectedRoute>
+          <Layout component={<Home />} />
+        </ProtectedRoute>
+      } />
       <Route
         path="/prn/:name/prid/:id"
-        element={<Layout component={<ProductView />} />}
+        element={
+          <ProtectedRoute>
+            <Layout component={<ProductView />} />
+          </ProtectedRoute>
+        }
       />
-      <Route path="/cart" element={<Layout component={<Cart />} />} />
+      <Route path="/cart" element={
+        <ProtectedRoute>
+          <Layout component={<Cart />} />
+        </ProtectedRoute>
+      } />
       <Route path="/orders" element={
         <ProtectedRoute>
           <Layout component={<Orders />} />
         </ProtectedRoute>
       } />
-      <Route path="/profile" element={<Layout component={<Profile />} />} />
-      <Route path="/checkout" element={<Layout component={<Checkout />} />} />
-      <Route path="/login" element={<LoginLayout component={<Login />} />} />
+      <Route path="/profile" element={
+        <ProtectedRoute>
+          <Layout component={<Profile />} />
+        </ProtectedRoute>
+      } />
+      <Route path="/checkout" element={
+        <ProtectedRoute>
+          <Layout component={<Checkout />} />
+        </ProtectedRoute>
+      } />
       <Route path="/admin" element={
         <ProtectedRoute adminOnly>
           <AdminDashboard />
@@ -37,11 +56,19 @@ const AppWithRouting = () => {
       } />
       <Route
         path="/not-found"
-        element={<Layout noFooter={true} component={<Error404 />} />}
+        element={
+          <ProtectedRoute>
+            <Layout noFooter={true} component={<Error404 />} />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="*"
-        element={<Layout noFooter={true} component={<Error404 />} />}
+        element={
+          <ProtectedRoute>
+            <Layout noFooter={true} component={<Error404 />} />
+          </ProtectedRoute>
+        }
       />
     </Routes>
   );
