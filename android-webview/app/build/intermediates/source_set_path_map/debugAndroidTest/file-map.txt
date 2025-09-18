@@ -1,0 +1,4 @@
+com.saras.webview.test.app-androidTest-0 /home/shashankmiyan/Videos/loggers/android-webview/app/build/generated/res/resValues/androidTest/debug
+com.saras.webview.test.app-mergeDebugAndroidTestResources-1 /home/shashankmiyan/Videos/loggers/android-webview/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/merged.dir
+com.saras.webview.test.app-mergeDebugAndroidTestResources-2 /home/shashankmiyan/Videos/loggers/android-webview/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/stripped.dir
+com.saras.webview.test.app-merged_res-3 /home/shashankmiyan/Videos/loggers/android-webview/app/build/intermediates/merged_res/debugAndroidTest
