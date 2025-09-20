@@ -140,7 +140,7 @@ const CartPanel = () => {
                     ))}
                   </div>
                 </div>
-                <div className="bg-white">
+                <div className="bg-white hidden md:block">
                   <div className="font-bold text-xl text-black pt-5 px-4">
                     Before you checkout
                   </div>

@@ -1,29 +1,27 @@
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../../hooks';
 import { createOrder } from '../../store/orders';
 import { clearCart } from '../../store/cart';
 import { addressesAPI } from '../../services/api';
-import { useState, useEffect } from 'react';
-
-const checkoutSchema = z.object({
-  address: z.string().min(10, 'Address must be at least 10 characters'),
-});
-
-type CheckoutData = z.infer<typeof checkoutSchema>;
+import { useNavigate } from 'react-router-dom';
 
 export default function CheckoutForm() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { cartItems, billAmount } = useAppSelector(state => state.cart);
+  const { loading } = useAppSelector(state => state.orders);
+  const { user, token } = useAppSelector(state => state.auth);
   const [addresses, setAddresses] = useState<any[]>([]);
-  const [selectedAddressId, setSelectedAddressId] = useState<string>('');
+  const [selectedAddressId, setSelectedAddressId] = useState('');
   const [useNewAddress, setUseNewAddress] = useState(false);
-  
+  const [newAddress, setNewAddress] = useState('');
+  const [codAccepted, setCodAccepted] = useState(false);
+  const [error, setError] = useState('');
+
   useEffect(() => {
     fetchAddresses();
   }, []);
-  
+
   const fetchAddresses = async () => {
     try {
       const response = await addressesAPI.getAll();
@@ -38,41 +36,79 @@ export default function CheckoutForm() {
       setUseNewAddress(true);
     }
   };
-  
-  const { register, handleSubmit, formState: { errors } } = useForm<CheckoutData>({
-    resolver: zodResolver(checkoutSchema),
-  });
 
-  const onSubmit = async (data: CheckoutData) => {
-    const orderItems = cartItems.map(item => ({
-      product_id: item.product.id,
-      quantity: item.quantity,
-      price: item.unitPrice,
-      name: item.product.title,
-    }));
+  const handlePlaceOrder = async () => {
+    console.log('Place Order clicked!');
+    setError('');
 
-    let deliveryAddress = data.address;
-    if (!useNewAddress && selectedAddressId) {
-      const selectedAddr = addresses.find(addr => addr.id.toString() === selectedAddressId);
-      if (selectedAddr) {
-        deliveryAddress = `${selectedAddr.address}, ${selectedAddr.area}`;
-      }
+    if (!user || !token) {
+      setError('Please login to place an order.');
+      return;
     }
 
-    await dispatch(createOrder({
-      items: orderItems,
-      total: billAmount,
-      delivery_address: deliveryAddress,
-    }));
-    
-    dispatch(clearCart());
+    if (!cartItems || cartItems.length === 0) {
+      setError('Your cart is empty.');
+      return;
+    }
+
+    let deliveryAddress = '';
+    if (useNewAddress) {
+      if (!newAddress || newAddress.length < 10) {
+        setError('Please enter a valid address (minimum 10 characters).');
+        return;
+      }
+      deliveryAddress = newAddress;
+    } else {
+      const selectedAddr = addresses.find(addr => addr.id.toString() === selectedAddressId);
+      if (!selectedAddr) {
+        setError('Please select a valid address.');
+        return;
+      }
+      deliveryAddress = `${selectedAddr.address}, ${selectedAddr.area}`;
+    }
+
+    try {
+      const orderItems = cartItems.map(item => ({
+        product_id: item.product.id,
+        quantity: item.quantity,
+        price: item.unitPrice,
+        name: item.product.title,
+      }));
+
+      console.log('Dispatching order:', {
+        items: orderItems,
+        total: billAmount,
+        delivery_address: deliveryAddress,
+        payment_method: 'cod',
+      });
+
+      const result = await dispatch(createOrder({
+        items: orderItems,
+        total: billAmount,
+        delivery_address: deliveryAddress,
+        payment_method: 'cod',
+      }));
+
+      console.log('Order result:', result);
+
+      if (createOrder.fulfilled.match(result)) {
+        console.log('Order successful, clearing cart');
+        dispatch(clearCart());
+        navigate('/orders');
+      } else {
+        setError('Failed to place order. Please try again.');
+      }
+    } catch (err) {
+      console.error('Order error:', err);
+      setError('An error occurred. Please try again.');
+    }
   };
 
   return (
     <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6">Checkout</h2>
       
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="space-y-6">
         <div>
           <label className="block text-sm font-medium mb-2">Delivery Address</label>
           
@@ -86,7 +122,7 @@ export default function CheckoutForm() {
                     onChange={() => setUseNewAddress(false)}
                     className="mr-2"
                   />
-                  Use Saved Address
+                  Select Saved Address
                 </label>
                 <label className="flex items-center">
                   <input
@@ -116,19 +152,27 @@ export default function CheckoutForm() {
           )}
           
           {(useNewAddress || addresses.length === 0) && (
-            <>
-              <textarea
-                {...register('address')}
-                rows={3}
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="Enter your complete address"
-              />
-              {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
-            </>
+            <textarea
+              value={newAddress}
+              onChange={(e) => setNewAddress(e.target.value)}
+              rows={3}
+              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your complete address"
+            />
           )}
         </div>
 
-
+        <div>
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={codAccepted}
+              onChange={(e) => setCodAccepted(e.target.checked)}
+              className="mr-2"
+            />
+            Cash on Delivery (COD)
+          </label>
+        </div>
 
         <div className="border-t pt-4">
           <div className="flex justify-between text-lg font-bold">
@@ -136,13 +180,20 @@ export default function CheckoutForm() {
           </div>
         </div>
 
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            {error}
+          </div>
+        )}
+
         <button
-          type="submit"
-          className="w-full bg-primary text-white p-3 rounded-lg hover:bg-primary-dark transition-colors"
+          onClick={handlePlaceOrder}
+          disabled={loading || !codAccepted}
+          className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
         >
-          Place Order
+          {loading ? 'Placing Order...' : !codAccepted ? 'Select Payment Method' : 'Place Order'}
         </button>
-      </form>
+      </div>
     </div>
   );
 }

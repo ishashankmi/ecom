@@ -11,28 +11,22 @@ type Props = {
 
 const responsive = {
   desktop: {
-    breakpoint: { max: 1920, min: 767 },
+    breakpoint: { max: 1920, min: 768 },
     items: 2,
     slidesToSlide: 1,
-    partialVisibilityGutter: -20,
+    partialVisibilityGutter: 10,
   },
   tablet: {
-    breakpoint: { max: 767, min: 500 },
-    items: 3,
-    slidesToSlide: 3,
-    partialVisibilityGutter: -10,
-  },
-  mobile: {
-    breakpoint: { max: 500, min: 360 },
+    breakpoint: { max: 768, min: 480 },
     items: 2,
     slidesToSlide: 1,
-    partialVisibilityGutter: -20,
+    partialVisibilityGutter: 5,
   },
-  minimobile: {
-    breakpoint: { max: 360, min: 0 },
-    items: 1,
+  mobile: {
+    breakpoint: { max: 480, min: 0 },
+    items: 1.5,
     slidesToSlide: 1,
-    partialVisibilityGutter: -20,
+    partialVisibilityGutter: 20,
   },
 };
 
@@ -43,15 +37,15 @@ const SuggestedItems = (props: Props) => {
     <div className="pb-3 flex relative mx-2">
       <div className="flex-1 overflow-auto -mr-5 -ml-1">
         <Carousel
-          swipeable={false}
-          draggable={false}
+          swipeable={true}
+          draggable={true}
           responsive={responsive}
           arrows={false}
           renderButtonGroupOutside={true}
           customButtonGroup={<CarouselButtonGroup />}
           shouldResetAutoplay={false}
           infinite={false}
-          itemClass="text-center"
+          itemClass="px-1"
           partialVisible
         >
           {items?.map((item, i) => (

@@ -12,6 +12,7 @@ interface CheckoutModalProps {
 const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const dispatch = useAppDispatch();
   const { cartItems, billAmount } = useAppSelector(state => state.cart);
+  const { user, token } = useAppSelector(state => state.auth);
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
@@ -19,6 +20,11 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   if (!isOpen) return null;
 
   const handlePlaceOrder = async () => {
+    if (!user || !token) {
+      toast.error('Please login to place order');
+      return;
+    }
+    
     if (!address.trim()) {
       toast.error('Please enter delivery address');
       return;
@@ -37,13 +43,22 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
         items: orderItems,
         total: billAmount,
         delivery_address: address,
+        payment_method: 'cod',
       })).unwrap();
 
       dispatch(clearCart());
-      setOrderPlaced(true);
       toast.success('Order placed successfully!');
+      setTimeout(() => {
+        setOrderPlaced(true);
+      }, 100);
     } catch (error) {
-      toast.error('Failed to place order');
+      console.error('Order creation failed:', error);
+      if (error?.message?.includes('Invalid token') || error?.message?.includes('token')) {
+        toast.error('Please login to place order');
+      } else {
+        const errorMessage = error?.message || 'Failed to place order';
+        toast.error(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -80,8 +95,8 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-96 max-w-sm mx-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg p-4 w-full max-w-sm mx-auto">
         <h3 className="text-lg font-semibold mb-4">Checkout - Cash on Delivery</h3>
         
         <div className="mb-4">
@@ -127,7 +142,8 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           <button
             onClick={handlePlaceOrder}
             disabled={loading}
-            className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+            className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation active:bg-green-800"
+            type="button"
           >
             {loading ? 'Placing...' : 'Place Order'}
           </button>

@@ -3,6 +3,7 @@ import { IoAddSharp, IoRemoveSharp } from 'react-icons/io5';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { addItem, removeItem } from '../../store/cart';
+import { showCart } from '../../store/ui';
 import { CartProduct } from '../../utils/types';
 import QuantityModal from './QuantityModal';
 
@@ -36,11 +37,20 @@ const AddToCartButton = ({ product, size }: ButtonProps) => {
       setShowModal(true);
     } else {
       dispatch(addItem({ product, quantity: 1 }));
+      dispatch(showCart());
     }
   };
 
   const handleQuantityConfirm = (quantity: number) => {
     dispatch(addItem({ product, quantity }));
+    dispatch(showCart());
+  };
+
+  const handleRemoveFromCart = () => {
+    // Remove all quantities of this item
+    for (let i = 0; i < itemCount; i++) {
+      dispatch(removeItem(product.id));
+    }
   };
 
   return (
@@ -85,6 +95,8 @@ const AddToCartButton = ({ product, size }: ButtonProps) => {
         onConfirm={handleQuantityConfirm}
         pricingTiers={product.sales_prices || []}
         productName={product.title}
+        isInCart={itemCount > 0}
+        onRemove={handleRemoveFromCart}
       />
     </>
   );

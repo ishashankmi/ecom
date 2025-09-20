@@ -9,7 +9,21 @@ const ProductCard = ({ product }: { product: any }) => {
   if (!product) return null;
   
   // console.log('ProductCard received product:', JSON.stringify(product, null, 2));
-  const { id, name, price, mrp, image, description, category, sales_prices } = product;
+  const { 
+    id = product.product_id, 
+    name = product.title, 
+    price, 
+    mrp, 
+    image, 
+    description, 
+    category, 
+    sales_prices 
+  } = product;
+  
+  if (!id || !name || !price) {
+    console.warn('ProductCard: Missing required fields', { id, name, price });
+    return null;
+  }
 
   const numPrice = parseFloat(price);
   const numMrp = parseFloat(mrp);
@@ -40,7 +54,7 @@ const ProductCard = ({ product }: { product: any }) => {
   }
 
   const cartProduct: CartProduct = {
-    id: id.toString(),
+    id: (id || product.product_id || '').toString(),
     title: name,
     subTitle: category,
     image: image,

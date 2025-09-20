@@ -7,10 +7,12 @@ type QuantityModalProps = {
   onConfirm: (quantity: number) => void;
   pricingTiers: PricingTier[];
   productName: string;
+  isInCart?: boolean;
+  onRemove?: () => void;
 };
 
-const QuantityModal = ({ isOpen, onClose, onConfirm, pricingTiers, productName }: QuantityModalProps) => {
-  const [quantity, setQuantity] = useState(1);
+const QuantityModal = ({ isOpen, onClose, onConfirm, pricingTiers, productName, isInCart, onRemove }: QuantityModalProps) => {
+  const [quantity, setQuantity] = useState<number | ''>('');
 
   if (!isOpen) return null;
 
@@ -31,9 +33,10 @@ const QuantityModal = ({ isOpen, onClose, onConfirm, pricingTiers, productName }
   };
 
   const handleConfirm = () => {
-    onConfirm(quantity);
+    const finalQuantity = quantity === '' ? 1 : quantity;
+    onConfirm(finalQuantity);
     onClose();
-    setQuantity(1);
+    setQuantity('');
   };
 
   return (
@@ -47,8 +50,19 @@ const QuantityModal = ({ isOpen, onClose, onConfirm, pricingTiers, productName }
             type="number"
             min="1"
             value={quantity}
-            onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === '') {
+                setQuantity('');
+              } else {
+                const numValue = parseInt(value);
+                if (!isNaN(numValue) && numValue > 0) {
+                  setQuantity(numValue);
+                }
+              }
+            }}
             className="w-full p-2 border rounded-lg"
+            placeholder="Enter quantity"
           />
         </div>
 
@@ -60,7 +74,7 @@ const QuantityModal = ({ isOpen, onClose, onConfirm, pricingTiers, productName }
               const finalPrice = tier.price !== undefined ? tier.price : 
                                tier.discount !== undefined ? Math.max(0, basePrice - tier.discount) : basePrice;
               return (
-                <div key={index} className={`p-2 rounded ${quantity >= tier.qty ? 'bg-green-100' : 'bg-gray-50'}`}>
+                <div key={index} className={`p-2 rounded ${(quantity === '' ? 1 : quantity) >= tier.qty ? 'bg-green-100' : 'bg-gray-50'}`}>
                   {tier.qty}+ qty: {tier.discount ? `₹${tier.discount} off` : `₹${tier.price}`} (₹{finalPrice} each)
                 </div>
               );
@@ -70,10 +84,10 @@ const QuantityModal = ({ isOpen, onClose, onConfirm, pricingTiers, productName }
 
         <div className="mb-4 p-3 bg-blue-50 rounded">
           <div className="text-sm">
-            <strong>Your Price: ₹{getCurrentPrice(quantity, pricingTiers[0]?.price || 100)} each</strong>
+            <strong>Your Price: ₹{getCurrentPrice(quantity === '' ? 1 : quantity, pricingTiers[0]?.price || 100)} each</strong>
           </div>
           <div className="text-sm text-gray-600">
-            Total: ₹{getCurrentPrice(quantity, pricingTiers[0]?.price || 100) * quantity}
+            Total: ₹{getCurrentPrice(quantity === '' ? 1 : quantity, pricingTiers[0]?.price || 100) * (quantity === '' ? 1 : quantity)}
           </div>
         </div>
 
@@ -84,11 +98,23 @@ const QuantityModal = ({ isOpen, onClose, onConfirm, pricingTiers, productName }
           >
             Cancel
           </button>
+          {isInCart && onRemove && (
+            <button
+              onClick={() => {
+                onRemove();
+                onClose();
+              }}
+              className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+            >
+              Remove
+            </button>
+          )}
           <button
             onClick={handleConfirm}
-            className="flex-1 px-4 py-2 bg-primary text-white rounded-lg"
+            disabled={quantity === '' || quantity < 1}
+            className="flex-1 px-4 py-2 bg-primary text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
-            Add to Cart
+            {isInCart ? 'Update Cart' : 'Add to Cart'}
           </button>
         </div>
       </div>
