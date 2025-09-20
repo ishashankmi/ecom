@@ -84,9 +84,15 @@ const initDB = async () => {
         total DECIMAL(10,2) NOT NULL,
         status VARCHAR(50) DEFAULT 'pending',
         payment_status VARCHAR(50) DEFAULT 'pending',
+        payment_method VARCHAR(50) DEFAULT 'cod',
         delivery_address TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
+    `);
+    
+    // Add payment_method column if it doesn't exist
+    await pool.query(`
+      ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_method VARCHAR(50) DEFAULT 'cod'
     `);
 
     await pool.query(`

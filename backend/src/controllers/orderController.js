@@ -2,12 +2,12 @@ import pool from '../db.js';
 
 export const createOrder = async (req, res) => {
   try {
-    const { items, total, delivery_address } = req.body;
+    const { items, total, delivery_address, payment_method = 'cod' } = req.body;
     const userId = req.user.id;
 
     const orderResult = await pool.query(
-      'INSERT INTO orders (user_id, total, delivery_address, status, payment_status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [userId, total, delivery_address, 'pending', 'pending']
+      'INSERT INTO orders (user_id, total, delivery_address, status, payment_status, payment_method) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [userId, total, delivery_address, 'pending', 'pending', payment_method]
     );
 
     const orderId = orderResult.rows[0].id;
